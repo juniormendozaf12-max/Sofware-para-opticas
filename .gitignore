@@ -1,0 +1,36 @@
+# ══════════════════════════════════════════════
+# Centro Óptico Sicuani — .gitignore
+# ══════════════════════════════════════════════
+
+# Archivos temporales y de debug
+tmp_*.js
+check_*.js
+check_*.py
+debug_*.js
+extract_block.js
+fix_*.js
+nul
+
+# Scripts de corrección/migración (ya ejecutados)
+correccion_*.py
+corregir_*.py
+agregar_*.py
+generate_system.py
+
+# Demos y tests
+demo_*.html
+test_*.html
+
+# Archivos C# sueltos (no forman parte de la app web)
+*.cs
+
+# CSVs de importación temporal
+*.csv
+
+# Carpeta Next.js (proyecto separado)
+opti-abi-next/
+
+# Archivos de sistema
+Thumbs.db
+desktop.ini
+.DS_Store
