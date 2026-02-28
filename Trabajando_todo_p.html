@@ -12032,6 +12032,50 @@
           <button class="config-tab-btn" onclick="mostrarConfigTab('tabUsuariosCaja', this)">
             💰 Usuarios con Cajas
           </button>
+          <button class="config-tab-btn" onclick="mostrarConfigTab('tabBackup', this)">
+            💾 Backup y Restauración
+          </button>
+        </div>
+
+        <!-- Tab: Backup y Restauración -->
+        <div class="config-tab-content" id="tabBackup">
+          <div style="padding:20px;">
+            <div style="background:#eff6ff;border-left:4px solid #3b82f6;padding:16px;border-radius:8px;margin-bottom:24px;">
+              <div style="font-weight:700;color:#1e40af;margin-bottom:6px;">Protege tus datos</div>
+              <div style="font-size:13px;color:#3b82f6;">Exporta una copia de seguridad de TODOS los datos del establecimiento actual. Puedes restaurarlos en cualquier momento desde un archivo JSON.</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:28px;font-weight:900;color:#1e293b;" id="backupTotalKeys">-</div>
+                <div style="font-size:12px;color:#64748b;font-weight:600;">Tablas en localStorage</div>
+              </div>
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:28px;font-weight:900;color:#1e293b;" id="backupTotalSize">-</div>
+                <div style="font-size:12px;color:#64748b;font-weight:600;">Tamaño aprox.</div>
+              </div>
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:28px;font-weight:900;color:#10b981;" id="backupCloudStatus">-</div>
+                <div style="font-size:12px;color:#64748b;font-weight:600;">Supabase</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+              <div style="background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:16px;padding:24px;text-align:center;cursor:pointer;" onclick="exportarBackupJSON()">
+                <div style="font-size:36px;margin-bottom:8px;">📥</div>
+                <div style="font-size:16px;font-weight:800;color:white;margin-bottom:4px;">Exportar Backup</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.8);">Descargar archivo .json con todos los datos</div>
+              </div>
+              <div style="background:linear-gradient(135deg,#10b981,#059669);border-radius:16px;padding:24px;text-align:center;cursor:pointer;" onclick="document.getElementById('inputImportBackup').click()">
+                <div style="font-size:36px;margin-bottom:8px;">📤</div>
+                <div style="font-size:16px;font-weight:800;color:white;margin-bottom:4px;">Restaurar Backup</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.8);">Importar desde archivo .json</div>
+              </div>
+              <input type="file" id="inputImportBackup" accept=".json" style="display:none;" onchange="importarBackupJSON(event)">
+            </div>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;" id="backupHistorial">
+              <div style="font-weight:700;color:#475569;margin-bottom:8px;">Historial de backups</div>
+              <div style="font-size:13px;color:#94a3b8;" id="backupUltimaFecha">No se ha realizado ningún backup todavía</div>
+            </div>
+          </div>
         </div>
 
         <!-- Tab: Usuarios -->
@@ -15103,6 +15147,41 @@
       } else {
         toast('✅ Bienvenido, ' + usuarioActual.nombreCompleto, 'success');
       }
+
+      // Verificar stock bajo después de login
+      setTimeout(verificarStockBajoAlerta, 2000);
+    }
+
+    // Alerta automática de stock bajo al iniciar sesión
+    function verificarStockBajoAlerta() {
+      try {
+        const productos = load(DB.PRODUCTOS) || [];
+        const agotados = productos.filter(p => p.stock === 0 && p.estado !== 'ANULADO');
+        const stockBajo = productos.filter(p => p.stock > 0 && p.stock <= (p.stockMin || 5) && p.estado !== 'ANULADO');
+
+        if (agotados.length === 0 && stockBajo.length === 0) return;
+
+        let msg = '';
+        if (agotados.length > 0) {
+          msg += '🔴 ' + agotados.length + ' producto(s) AGOTADO(S)';
+        }
+        if (stockBajo.length > 0) {
+          if (msg) msg += '\n';
+          msg += '🟡 ' + stockBajo.length + ' producto(s) con STOCK BAJO';
+        }
+
+        const banner = document.createElement('div');
+        banner.style.cssText = 'position:fixed;top:60px;right:20px;z-index:99999;background:linear-gradient(135deg,#1e293b,#334155);color:white;padding:16px 24px;border-radius:12px;max-width:350px;font-size:13px;line-height:1.5;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+        banner.innerHTML = '<div style="font-weight:800;margin-bottom:8px;font-size:14px;">⚠️ Alerta de Inventario</div>' +
+          '<div style="white-space:pre-line;">' + msg + '</div>' +
+          '<div style="margin-top:10px;font-size:11px;color:#94a3b8;">Clic para ir al Dashboard</div>';
+        banner.onclick = function() {
+          if (typeof mostrarSeccion === 'function') mostrarSeccion('dashboard');
+          banner.remove();
+        };
+        document.body.appendChild(banner);
+        setTimeout(function() { if (banner.parentNode) banner.remove(); }, 8000);
+      } catch (e) { /* no critical */ }
     }
 
     // Función para mostrar mensaje de bienvenida al vendedor
@@ -40396,6 +40475,7 @@ padding: 20px;
       if (tabId === 'tabUsuariosAlmacen') cargarUsuariosAlmacen();
       if (tabId === 'tabCorrelativos') mostrarCorrelativos();
       if (tabId === 'tabUsuariosCaja') cargarUsuariosCaja();
+      if (tabId === 'tabBackup' && typeof actualizarEstadisticasBackup === 'function') actualizarEstadisticasBackup();
     }
 
     // ========== GESTIÓN DE USUARIOS ==========
@@ -43470,6 +43550,162 @@ padding: 20px;
       toast('✅ Sistema listo - ' + autoUsuario);
       console.log('✅ Auto-login completado');
       */
+    }
+
+    /* ============================================
+       SISTEMA DE BACKUP Y RESTAURACIÓN
+       ============================================ */
+
+    function actualizarEstadisticasBackup() {
+      if (!establecimientoActual) return;
+      const prefix = 'optica_' + establecimientoActual.toLowerCase() + '_';
+      let count = 0;
+      let totalSize = 0;
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(prefix)) {
+          count++;
+          totalSize += (localStorage.getItem(key) || '').length;
+        }
+      }
+
+      const el = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+      el('backupTotalKeys', count);
+      el('backupTotalSize', totalSize > 1048576 ? (totalSize / 1048576).toFixed(1) + ' MB' : (totalSize / 1024).toFixed(0) + ' KB');
+      el('backupCloudStatus', SupabaseSync.isConnected() ? 'Conectado' : 'Offline');
+
+      const ultimoBackup = localStorage.getItem('_ultimo_backup_' + establecimientoActual.toLowerCase());
+      if (ultimoBackup) {
+        const fecha = new Date(ultimoBackup);
+        el('backupUltimaFecha', 'Último backup: ' + fecha.toLocaleDateString('es-PE') + ' a las ' + fecha.toLocaleTimeString('es-PE'));
+      }
+    }
+
+    function exportarBackupJSON() {
+      if (!establecimientoActual) {
+        toast('❌ Inicia sesión primero', 'error');
+        return;
+      }
+
+      const prefix = 'optica_' + establecimientoActual.toLowerCase() + '_';
+      const backup = {
+        _meta: {
+          app: 'Centro Optico Sicuani',
+          version: '7.0',
+          establecimiento: establecimientoActual,
+          fecha: new Date().toISOString(),
+          totalTablas: 0
+        },
+        datos: {}
+      };
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(prefix)) {
+          try {
+            const dataKey = key.replace(prefix, '');
+            backup.datos[dataKey] = JSON.parse(localStorage.getItem(key));
+            backup._meta.totalTablas++;
+          } catch (e) { /* skip corrupt */ }
+        }
+      }
+
+      if (backup._meta.totalTablas === 0) {
+        toast('⚠️ No hay datos para exportar', 'warning');
+        return;
+      }
+
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const fecha = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = 'backup_' + establecimientoActual.toLowerCase() + '_' + fecha + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      localStorage.setItem('_ultimo_backup_' + establecimientoActual.toLowerCase(), new Date().toISOString());
+      toast('✅ Backup exportado: ' + backup._meta.totalTablas + ' tablas', 'success');
+      actualizarEstadisticasBackup();
+    }
+
+    function importarBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.name.endsWith('.json')) {
+        toast('❌ Solo se aceptan archivos .json', 'error');
+        event.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const backup = JSON.parse(e.target.result);
+
+          if (!backup._meta || !backup.datos) {
+            toast('❌ Archivo de backup inválido', 'error');
+            return;
+          }
+
+          const tablas = Object.keys(backup.datos).length;
+          const establecimiento = backup._meta.establecimiento || 'desconocido';
+          const fecha = backup._meta.fecha ? new Date(backup._meta.fecha).toLocaleDateString('es-PE') : 'desconocida';
+
+          const confirmar = confirm(
+            '¿RESTAURAR BACKUP?\n\n' +
+            'Establecimiento: ' + establecimiento + '\n' +
+            'Fecha del backup: ' + fecha + '\n' +
+            'Tablas a restaurar: ' + tablas + '\n\n' +
+            '⚠️ Esto REEMPLAZARÁ los datos actuales.\n¿Deseas continuar?'
+          );
+
+          if (!confirmar) {
+            toast('Restauración cancelada', 'info');
+            event.target.value = '';
+            return;
+          }
+
+          const targetEstab = establecimientoActual ? establecimientoActual.toLowerCase() : establecimiento.toLowerCase();
+          const prefix = 'optica_' + targetEstab + '_';
+          let restored = 0;
+          let errors = 0;
+
+          for (const [dataKey, data] of Object.entries(backup.datos)) {
+            try {
+              const fullKey = prefix + dataKey;
+              localStorage.setItem(fullKey, JSON.stringify(data));
+              SupabaseSync.pushToCloud(fullKey, data);
+              restored++;
+            } catch (err) {
+              errors++;
+            }
+          }
+
+          SupabaseSync.flushPendingSync();
+          actualizarDB();
+          if (typeof inicializarSistema === 'function') inicializarSistema();
+          if (typeof cargarDashboard === 'function') cargarDashboard();
+
+          if (errors > 0) {
+            toast('⚠️ ' + restored + ' tablas restauradas, ' + errors + ' errores', 'warning');
+          } else {
+            toast('✅ Backup restaurado: ' + restored + ' tablas', 'success');
+          }
+
+          actualizarEstadisticasBackup();
+        } catch (err) {
+          toast('❌ Error al leer el archivo: ' + err.message, 'error');
+        }
+
+        event.target.value = '';
+      };
+
+      reader.readAsText(file);
     }
 
     /* ============================================
