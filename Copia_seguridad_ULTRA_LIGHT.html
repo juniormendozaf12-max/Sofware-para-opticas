@@ -5410,12 +5410,28 @@ button:hover, a:hover, .ribbon-btn:hover,
         </button>
       </li>
       <li>
+        <button class="config-menu-btn" onclick="subirDatosSupabase()" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+          <span class="config-menu-icon">☁️</span>
+          <span>Subir datos a Supabase</span>
+        </button>
+      </li>
+      <li>
+        <button class="config-menu-btn" onclick="SupabaseSync.forceSync()" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+          <span class="config-menu-icon">🔄</span>
+          <span>Forzar Sincronización</span>
+        </button>
+      </li>
+      <li>
         <button class="config-menu-btn" onclick="salirSistema()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
           <span class="config-menu-icon">🚪</span>
           <span>Salir</span>
         </button>
       </li>
     </ul>
+    <div id="supabaseStatusIndicator" style="padding:10px 15px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:6px;">
+      <span id="syncDot" style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+      <span id="syncLabel">Desconectado</span>
+    </div>
   </div>
 </div>
 
@@ -13643,6 +13659,64 @@ const SupabaseSync = (function() {
 
 // Inicializar Supabase al cargar
 SupabaseSync.init();
+
+// Actualizar indicador visual de conexión Supabase
+function actualizarIndicadorSync() {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  if (!dot || !label) return;
+  if (SupabaseSync.isConnected()) {
+    dot.style.background = '#10b981';
+    label.textContent = 'Conectado a Supabase';
+  } else {
+    dot.style.background = '#ef4444';
+    label.textContent = 'Desconectado';
+  }
+}
+// Actualizar indicador cada 3 segundos
+setInterval(actualizarIndicadorSync, 3000);
+
+// Subir TODOS los datos locales a Supabase (upload limpio)
+async function subirDatosSupabase() {
+  if (!SupabaseSync.isConnected()) {
+    if (typeof toast === 'function') toast('❌ No hay conexión con Supabase', 'error');
+    return;
+  }
+  if (!establecimientoActual) {
+    if (typeof toast === 'function') toast('❌ Inicia sesión primero', 'error');
+    return;
+  }
+
+  const prefix = 'optica_' + establecimientoActual.toLowerCase() + '_';
+  let count = 0;
+  let errors = 0;
+
+  if (typeof toast === 'function') toast('☁️ Subiendo datos a Supabase...', 'info');
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(prefix)) {
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        SupabaseSync.pushToCloud(key, data);
+        count++;
+      } catch (e) {
+        errors++;
+      }
+    }
+  }
+
+  // Forzar envío inmediato
+  await SupabaseSync.flushPendingSync();
+
+  if (typeof toast === 'function') {
+    if (errors > 0) {
+      toast('⚠️ ' + count + ' tablas subidas, ' + errors + ' errores', 'warning');
+    } else {
+      toast('✅ ' + count + ' tablas subidas exitosamente a Supabase', 'success');
+    }
+  }
+}
 
 // ══════════════════════════════════════════════════════════
 // LOAD / SAVE — con sync a Supabase
