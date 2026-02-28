@@ -55,6 +55,8 @@ button:hover, a:hover, .ribbon-btn:hover,
 /* Print */
 @media print { *, *::before, *::after { box-shadow:none!important; text-shadow:none!important; filter:none!important; } }
 </style>
+<!-- SUPABASE: Cliente JS para sincronización cloud multi-sucursal -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <!-- LOW-END: Scripts con defer para no bloquear renderizado -->
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -12831,6 +12833,11 @@ function intentarLogin() {
   actualizarDB();
   inicializarSistema();
 
+  // Sincronizar con Supabase (async, no bloquea)
+  if (establecimientoActual && SupabaseSync.isConnected()) {
+    SupabaseSync.syncOnLogin(establecimientoActual.toLowerCase());
+  }
+
   // Mostrar mensaje de bienvenida según rol
   if (usuarioActual.rol === ROLES.VENDEDOR) {
     mostrarMensajeBienvenidaVendedor();
@@ -13281,10 +13288,14 @@ function verificarSesion() {
         actualizarLogoPrincipal(establecimientoActual);
 
         actualizarDB();
+        // Sync con Supabase al restaurar sesión
+        if (establecimientoActual && SupabaseSync.isConnected()) {
+          SupabaseSync.syncOnLogin(establecimientoActual.toLowerCase());
+        }
         return true;
       }
     } catch (e) {
- // [LOW-END removed]
+      // Session restore error
     }
   }
 
@@ -13394,12 +13405,248 @@ function isLocalStorageAvailable() {
     localStorage.removeItem(test);
     return true;
   } catch (e) {
-// LOW-END removed
     return false;
   }
 }
 
 const useLocalStorage = isLocalStorageAvailable();
+
+// ══════════════════════════════════════════════════════════
+// SUPABASE SYNC MODULE — Sincronización cloud multi-sucursal
+// ══════════════════════════════════════════════════════════
+const SupabaseSync = (function() {
+  'use strict';
+
+  // Credenciales (cambiar si es necesario)
+  const SUPABASE_URL = 'https://gcrdnnlbetuzrnfqllmn.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_luiMpSX9hmmU6mXOazwtHw_ecnEirIW';
+  const TABLE = 'app_data';
+
+  let client = null;
+  let realtimeChannel = null;
+  let syncEnabled = false;
+  let pendingSync = {}; // Cola de escrituras pendientes
+  let syncTimer = null;
+
+  // Extraer establecimiento y data_key del key completo
+  // Ej: 'optica_sicuani_ventas' → { establecimiento: 'sicuani', data_key: 'ventas' }
+  function parseKey(fullKey) {
+    if (!fullKey || typeof fullKey !== 'string') return null;
+    const match = fullKey.match(/^optica_(.+?)_([a-z_]+)$/);
+    if (!match) return null;
+    return { establecimiento: match[1], data_key: match[2] };
+  }
+
+  // Inicializar cliente Supabase
+  function init() {
+    try {
+      if (typeof supabase === 'undefined' || !supabase.createClient) {
+        console.warn('[Supabase] CDN no cargado. Modo offline.');
+        return false;
+      }
+      client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      syncEnabled = true;
+
+      // Iniciar batch sync cada 5 segundos (no bloquea la UI)
+      syncTimer = setInterval(flushPendingSync, 5000);
+
+      return true;
+    } catch (e) {
+      console.warn('[Supabase] Error al inicializar:', e.message);
+      return false;
+    }
+  }
+
+  // Push async a Supabase (no bloquea)
+  function pushToCloud(fullKey, data) {
+    if (!syncEnabled || !client) return;
+    const parsed = parseKey(fullKey);
+    if (!parsed) return;
+
+    // Agregar a cola de pendientes (deduplica si ya está)
+    pendingSync[fullKey] = { ...parsed, data: data };
+  }
+
+  // Enviar todas las escrituras pendientes a Supabase
+  async function flushPendingSync() {
+    if (!syncEnabled || !client) return;
+    const keys = Object.keys(pendingSync);
+    if (keys.length === 0) return;
+
+    // Tomar snapshot y limpiar cola
+    const batch = { ...pendingSync };
+    pendingSync = {};
+
+    for (const fullKey of Object.keys(batch)) {
+      const item = batch[fullKey];
+      try {
+        await client.from(TABLE).upsert({
+          establecimiento: item.establecimiento,
+          data_key: item.data_key,
+          data: item.data
+        }, { onConflict: 'establecimiento,data_key' });
+      } catch (e) {
+        // Re-encolar si falla
+        pendingSync[fullKey] = item;
+      }
+    }
+  }
+
+  // Pull desde Supabase (para sincronizar al iniciar)
+  async function pullFromCloud(fullKey) {
+    if (!syncEnabled || !client) return null;
+    const parsed = parseKey(fullKey);
+    if (!parsed) return null;
+
+    try {
+      const { data, error } = await client.from(TABLE)
+        .select('data, updated_at')
+        .eq('establecimiento', parsed.establecimiento)
+        .eq('data_key', parsed.data_key)
+        .single();
+
+      if (error || !data) return null;
+      return data.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Pull TODOS los datos de un establecimiento
+  async function pullAllFromCloud(establecimiento) {
+    if (!syncEnabled || !client) return null;
+
+    try {
+      const { data, error } = await client.from(TABLE)
+        .select('data_key, data')
+        .eq('establecimiento', establecimiento);
+
+      if (error || !data) return null;
+      return data; // Array de { data_key, data }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Suscribirse a cambios en tiempo real (otra sucursal actualiza datos)
+  function subscribeRealtime(establecimiento, onUpdate) {
+    if (!syncEnabled || !client) return;
+    // Limpiar suscripción anterior
+    if (realtimeChannel) {
+      client.removeChannel(realtimeChannel);
+    }
+
+    realtimeChannel = client.channel('app_data_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: TABLE,
+        filter: 'establecimiento=eq.' + establecimiento
+      }, (payload) => {
+        if (payload.new && typeof onUpdate === 'function') {
+          onUpdate(payload.new.data_key, payload.new.data);
+        }
+      })
+      .subscribe();
+  }
+
+  // Sincronización inicial: bajar datos del cloud al localStorage
+  async function syncOnLogin(establecimiento) {
+    if (!syncEnabled || !client) return;
+
+    try {
+      const cloudData = await pullAllFromCloud(establecimiento);
+      if (!cloudData || cloudData.length === 0) {
+        // No hay datos en cloud: subir los locales
+        await pushAllToCloud(establecimiento);
+        if (typeof toast === 'function') {
+          toast('☁️ Datos locales sincronizados con la nube', 'success');
+        }
+        return;
+      }
+
+      // Hay datos en cloud: sincronizar con local
+      let updated = 0;
+      cloudData.forEach(item => {
+        const fullKey = 'optica_' + establecimiento + '_' + item.data_key;
+        const localData = localStorage.getItem(fullKey);
+        const cloudJson = JSON.stringify(item.data);
+
+        if (localData !== cloudJson) {
+          localStorage.setItem(fullKey, cloudJson);
+          updated++;
+        }
+      });
+
+      // Suscribirse a cambios en tiempo real
+      subscribeRealtime(establecimiento, (dataKey, data) => {
+        const fullKey = 'optica_' + establecimiento + '_' + dataKey;
+        localStorage.setItem(fullKey, JSON.stringify(data));
+        // Refrescar vista si es necesario
+        if (typeof toast === 'function') {
+          toast('🔄 Datos actualizados desde otra sucursal: ' + dataKey, 'info');
+        }
+      });
+
+      if (updated > 0 && typeof toast === 'function') {
+        toast('☁️ ' + updated + ' tablas sincronizadas desde la nube', 'success');
+      }
+    } catch (e) {
+      console.warn('[Supabase] Error en sync inicial:', e.message);
+    }
+  }
+
+  // Subir TODOS los datos locales al cloud
+  async function pushAllToCloud(establecimiento) {
+    if (!syncEnabled || !client) return;
+    const prefix = 'optica_' + establecimiento + '_';
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix)) {
+        try {
+          const data = JSON.parse(localStorage.getItem(key));
+          const parsed = parseKey(key);
+          if (parsed) {
+            await client.from(TABLE).upsert({
+              establecimiento: parsed.establecimiento,
+              data_key: parsed.data_key,
+              data: data
+            }, { onConflict: 'establecimiento,data_key' });
+          }
+        } catch (e) { /* skip invalid entries */ }
+      }
+    }
+  }
+
+  // Estado de la conexión
+  function isConnected() { return syncEnabled && client !== null; }
+
+  // Forzar flush inmediato
+  async function forceSync() {
+    await flushPendingSync();
+    if (typeof toast === 'function') {
+      toast('☁️ Sincronización forzada completada', 'success');
+    }
+  }
+
+  return {
+    init,
+    pushToCloud,
+    pullFromCloud,
+    syncOnLogin,
+    forceSync,
+    isConnected,
+    flushPendingSync
+  };
+})();
+
+// Inicializar Supabase al cargar
+SupabaseSync.init();
+
+// ══════════════════════════════════════════════════════════
+// LOAD / SAVE — con sync a Supabase
+// ══════════════════════════════════════════════════════════
 
 function load(key) {
   try {
@@ -13409,7 +13656,6 @@ function load(key) {
       return memoryStorage[key] || [];
     }
   } catch(e) {
- // [LOW-END removed]
     return [];
   }
 }
@@ -13421,9 +13667,9 @@ function save(key, data) {
     } else {
       memoryStorage[key] = data;
     }
+    // Sync async a Supabase (no bloquea la UI)
+    SupabaseSync.pushToCloud(key, data);
   } catch(e) {
- // [LOW-END removed]
-    // Fallback a memoria
     memoryStorage[key] = data;
   }
 }
