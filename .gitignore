@@ -2,35 +2,37 @@
 # Centro Óptico Sicuani — .gitignore
 # ══════════════════════════════════════════════
 
+# Credenciales y secretos (NUNCA subir)
+.env
+.env.local
+.env.production
+
 # Archivos temporales y de debug
-tmp_*.js
-check_*.js
-check_*.py
-debug_*.js
-extract_block.js
-fix_*.js
-nul
+scripts/tmp_*.js
+scripts/debug_*.js
+scripts/extract_block.js
+scripts/check_*.js
 
-# Scripts de corrección/migración (ya ejecutados)
-correccion_*.py
-corregir_*.py
-agregar_*.py
-generate_system.py
+# Archivo viejo (backups descartados)
+_archivo_viejo/
 
-# Demos y tests
-demo_*.html
-test_*.html
-
-# Archivos C# sueltos (no forman parte de la app web)
-*.cs
-
-# CSVs de importación temporal
-*.csv
-
-# Carpeta Next.js (proyecto separado)
-opti-abi-next/
+# Carpeta .claude (sesiones de IA)
+.claude/
 
 # Archivos de sistema
 Thumbs.db
 desktop.ini
 .DS_Store
+*.swp
+*.swo
+*~
+
+# Node modules (si se usa en el futuro)
+node_modules/
+.next/
+package-lock.json
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace

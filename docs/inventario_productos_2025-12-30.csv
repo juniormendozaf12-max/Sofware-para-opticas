@@ -1,0 +1,131 @@
+﻿CÓDIGO,PRODUCTO,DESCRIPCIÓN,CATEGORÍA,PRECIO,COSTO,STOCK,STOCK MIN,ESTADO,VALOR STOCK
+LUN001,Blue Defense Premium,Lentes con protección luz azul premium,Lunas,130.00,65.00,50,5,EN STOCK,6500.00
+LUN002,Crizal Sapphire HR,Antirreflejo Sapphire alta resistencia,Lunas,190.00,95.00,30,5,EN STOCK,5700.00
+LUN003,Crizal Easy Pro,Antirreflejo fácil limpieza profesional,Lunas,120.00,60.00,47,5,EN STOCK,5640.00
+LUN004,Transitions Signature,Fotocromático Signature adaptable,Lunas,280.00,140.00,25,5,EN STOCK,7000.00
+LUN005,Transitions XTRActive,Fotocromático extra oscuro exterior,Lunas,320.00,160.00,15,5,EN STOCK,4800.00
+LUN006,Fotocromático,Luna fotocromática estándar,Lunas,150.00,75.00,100,10,EN STOCK,15000.00
+LUN007,Policarbonato,Luna policarbonato resistente impacto,Lunas,80.00,40.00,100,10,EN STOCK,8000.00
+LUN008,Trivex,Luna Trivex ultraliviana,Lunas,95.00,48.00,60,5,EN STOCK,5700.00
+LUN009,Blue Zero,Protección luz azul básica económica,Lunas,85.00,43.00,80,10,EN STOCK,6800.00
+LUN010,Alto Índice 1.67,Luna delgada alto índice 1.67,Lunas,180.00,90.00,25,5,EN STOCK,4500.00
+LUN011,Alto Índice 1.74,Luna ultra delgada alto índice 1.74,Lunas,250.00,125.00,15,5,EN STOCK,3750.00
+LUN012,Fotocromático Gris,Luna fotocromática color gris,Lunas,150.00,75.00,30,5,EN STOCK,4500.00
+LUN013,Fotocromático Café,Luna fotocromática color café,Lunas,150.00,75.00,30,5,EN STOCK,4500.00
+LUN014,Progresivo Varilux,Multifocal Varilux premium,Lunas,450.00,225.00,10,3,EN STOCK,4500.00
+LUN015,Progresivo Económico,Multifocal económico estándar,Lunas,200.00,100.00,20,5,EN STOCK,4000.00
+LUN016,Progresivo Kodak,Multifocal Kodak alta definición,Lunas,380.00,190.00,12,3,EN STOCK,4560.00
+LUN017,Progresivo Essilor,Multifocal Essilor calidad premium,Lunas,420.00,210.00,8,3,EN STOCK,3360.00
+LUN018,Bifocal FT-28,Bifocal flat top 28mm,Lunas,120.00,60.00,30,5,EN STOCK,3600.00
+LUN019,Bifocal Invisible,Bifocal sin línea visible,Lunas,180.00,90.00,20,5,EN STOCK,3600.00
+LUN020,Antireflex HD,Tratamiento antirreflejo HD,Lunas,45.00,23.00,150,20,EN STOCK,6750.00
+LUN021,Antireflex Premium,Tratamiento antirreflejo premium,Lunas,65.00,33.00,100,15,EN STOCK,6500.00
+LUN022,Montura Metálica Classic,Montura metálica clásica elegante,Lunas,120.00,60.00,100,10,EN STOCK,12000.00
+LUN023,Montura Acetato Premium,Montura acetato alta calidad,Lunas,180.00,90.00,100,10,EN STOCK,18000.00
+MON001,Montura Metálica Clásica,Montura metálica diseño clásico,Monturas,120.00,60.00,47,5,EN STOCK,5640.00
+MON002,Montura Acetato Fashion,Montura acetato moda actual,Monturas,150.00,75.00,35,5,EN STOCK,5250.00
+MON003,Montura Titanio,Montura titanio ultraliviana,Monturas,280.00,140.00,10,3,EN STOCK,2800.00
+MON004,Montura Infantil,Montura niños flexible resistente,Monturas,85.00,43.00,30,5,EN STOCK,2550.00
+MON005,Montura Sport,Montura deportiva resistente,Monturas,150.00,75.00,15,5,EN STOCK,2250.00
+MON006,Montura Semi Al Aire,Montura semi al aire elegante,Monturas,95.00,48.00,40,5,EN STOCK,3800.00
+MON007,Montura Aviador,Montura estilo aviador clásico,Monturas,110.00,55.00,25,5,EN STOCK,2750.00
+MON008,Montura Cat Eye,Montura ojo de gato femenina,Monturas,130.00,65.00,20,5,EN STOCK,2600.00
+MON009,Montura Redonda Vintage,Montura redonda estilo vintage,Monturas,100.00,50.00,30,5,EN STOCK,3000.00
+MON010,Montura Cuadrada Ejecutiva,Montura cuadrada estilo ejecutivo,Monturas,140.00,70.00,25,5,EN STOCK,3500.00
+MON011,Montura Flexible Memory,Montura memory flex resistente,Monturas,165.00,83.00,20,5,EN STOCK,3300.00
+MON012,Montura Oversize,Montura grande oversize fashion,Monturas,125.00,63.00,18,5,EN STOCK,2250.00
+MON013,Montura Acetato Grueso,Montura acetato grueso moderno,Monturas,145.00,73.00,22,5,EN STOCK,3190.00
+MON014,Montura Sin Aro,Montura sin aro minimalista,Monturas,200.00,100.00,12,3,EN STOCK,2400.00
+MON015,Montura Carey,Montura efecto carey clásico,Monturas,135.00,68.00,28,5,EN STOCK,3780.00
+LC001,LC Mensual Esférico,Lente contacto mensual esférico,L. Contacto,45.00,23.00,50,10,EN STOCK,2250.00
+LC002,LC Diario Pack 30,Lentes diarios caja 30 unidades,L. Contacto,120.00,60.00,20,5,EN STOCK,2400.00
+LC003,LC Color Mensual,Lente contacto color mensual,L. Contacto,65.00,33.00,30,5,EN STOCK,1950.00
+LC004,LC Tórico Mensual,Lente contacto tórico astigmatismo,L. Contacto,85.00,43.00,25,5,EN STOCK,2125.00
+LC005,LC Multifocal,Lente contacto multifocal presbicia,L. Contacto,95.00,48.00,15,5,EN STOCK,1425.00
+LC006,LC Quincenal,Lente contacto quincenal,L. Contacto,55.00,28.00,35,8,EN STOCK,1925.00
+LC007,Solución Multipropósito 360ml,Solución limpieza LC 360ml,L. Contacto,35.00,18.00,60,15,EN STOCK,2100.00
+LC008,Estuche Lentes Contacto,Estuche porta lentes contacto,L. Contacto,8.00,4.00,80,20,EN STOCK,640.00
+ACC001,Estuche Rígido,Estuche protector rígido premium,Accesorios,15.00,8.00,100,20,EN STOCK,1500.00
+ACC002,Estuche Blando,Estuche blando flexible,Accesorios,10.00,5.00,120,25,EN STOCK,1200.00
+ACC003,Paño Microfibra,Paño limpiador microfibra suave,Accesorios,8.00,4.00,200,50,EN STOCK,1600.00
+ACC004,Spray Limpiador 60ml,Spray limpiador lentes 60ml,Accesorios,12.00,6.00,80,20,EN STOCK,960.00
+ACC005,Cordón para Lentes,Cordón sujetador lentes clásico,Accesorios,10.00,5.00,60,15,EN STOCK,600.00
+ACC006,Cadena Metálica,Cadena metálica porta lentes,Accesorios,25.00,13.00,40,10,EN STOCK,1000.00
+ACC007,Toallitas Húmedas x50,Toallitas húmedas limpieza x50,Accesorios,18.00,9.00,50,12,EN STOCK,900.00
+ACC008,Kit Limpieza Completo,Kit spray + paño + estuche,Accesorios,30.00,15.00,35,8,EN STOCK,1050.00
+ACC009,Soporte Exhibidor,Soporte exhibidor lentes mesa,Accesorios,20.00,10.00,25,5,EN STOCK,500.00
+ACC010,Protector Solar Lentes,Clip protector solar para lentes,Accesorios,35.00,18.00,30,8,EN STOCK,1050.00
+ACC011,Parches Nasales Silicona,Parches nasales silicona x2,Accesorios,5.00,3.00,100,25,EN STOCK,500.00
+ACC012,Tornillos Repuesto,Kit tornillos repuesto universal,Accesorios,8.00,4.00,80,20,EN STOCK,640.00
+ACC013,Anteojos Natación,Anteojos natación graduables,Accesorios,45.00,23.00,15,5,EN STOCK,675.00
+ACC014,Funda de Viaje,Funda de viaje porta 3 lentes,Accesorios,28.00,14.00,20,5,EN STOCK,560.00
+SRV001,Examen Visual Completo,Examen de vista computarizado,Servicios,30.00,0.00,999,5,EN STOCK,29970.00
+SRV002,Ajuste de Montura,Ajuste y calibración montura,Servicios,10.00,0.00,999,5,EN STOCK,9990.00
+SRV003,Reparación Soldadura,Reparación con soldadura láser,Servicios,25.00,0.00,999,5,EN STOCK,24975.00
+SRV004,Cambio de Plaquetas,Cambio plaquetas nasales,Servicios,8.00,0.00,999,5,EN STOCK,7992.00
+SRV005,Limpieza Ultrasónica,Limpieza profunda ultrasónica,Servicios,15.00,0.00,999,5,EN STOCK,14985.00
+SRV006,Adaptación LC,Adaptación lentes de contacto,Servicios,40.00,0.00,999,5,EN STOCK,39960.00
+SRV007,Control Post-Venta,Control adaptación post venta,Servicios,0.00,0.00,999,5,EN STOCK,0.00
+SRV008,Montaje Express,Montaje de lunas en 1 hora,Servicios,20.00,0.00,999,5,EN STOCK,19980.00
+SRV009,Tallado Especial,Tallado lentes especiales,Servicios,35.00,0.00,999,5,EN STOCK,34965.00
+SRV010,Certificado Óptico,Certificado examen óptico,Servicios,15.00,0.00,999,5,EN STOCK,14985.00
+PROD_1766441132893_284,Matsuda,,Monturas,150.00,150.00,6,5,EN STOCK,900.00
+PROD_1766441200853_9,tizziano,,Monturas,180.00,180.00,7,5,EN STOCK,1260.00
+PROD_1766441236325_433,Bella Roma,,Monturas,140.00,140.00,13,5,EN STOCK,1820.00
+PROD_1766441279701_638,Conford Blue,,Monturas,130.00,130.00,9,5,EN STOCK,1170.00
+PROD_1766441318493_123,Angelina Bondone,,Monturas,180.00,180.00,30,5,EN STOCK,5400.00
+PROD_1766441347333_572,Vision,,Monturas,140.00,140.00,57,5,EN STOCK,7980.00
+PROD_1766441365110_319,Paris,,Monturas,140.00,140.00,23,5,EN STOCK,3220.00
+PROD_1766441380229_866,Napoli,,Monturas,130.00,130.00,12,5,EN STOCK,1560.00
+PROD_1766441409589_495,Polotti,,Monturas,140.00,140.00,3,5,STOCK BAJO,420.00
+PROD_1766446439692_763,Gaet,,Monturas,140.00,0.00,8,5,EN STOCK,1120.00
+PROD_1766446496059_311,Allpá,,Monturas,140.00,0.00,49,5,EN STOCK,6860.00
+PROD_1766446517389_518,Native gold,,Monturas,140.00,0.00,11,5,EN STOCK,1540.00
+PROD_1766446531956_642,Chazuka,,Monturas,130.00,0.00,3,5,STOCK BAJO,390.00
+PROD_1766446585077_779,Michael Glass,,Monturas,190.00,0.00,10,5,EN STOCK,1900.00
+PROD_1766446608475_590,Bocaccio,,Monturas,180.00,0.00,0,5,AGOTADO,0.00
+PROD_1766446631876_5,Dimondi,,Monturas,140.00,0.00,8,5,EN STOCK,1120.00
+PROD_1766446648548_472,Life Itali,,Monturas,130.00,0.00,2,5,STOCK BAJO,260.00
+PROD_1766446668355_26,Dixxon,,Monturas,190.00,0.00,6,5,EN STOCK,1140.00
+PROD_1766446698828_139,Antonella,,Monturas,150.00,0.00,38,5,EN STOCK,5700.00
+PROD_1766446714987_5,Vertigo,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446728764_90,Ferrini,,Monturas,130.00,0.00,2,5,STOCK BAJO,260.00
+PROD_1766446744252_214,Vortex,,Monturas,140.00,0.00,16,5,EN STOCK,2240.00
+PROD_1766446770948_72,MB LENTS,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446786340_796,zetti,,Monturas,140.00,0.00,10,5,EN STOCK,1400.00
+PROD_1766446799796_617,Fabella wong,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446888012_107,Cactus,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446914564_29,CICI,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446941268_539,Cardi Fashion,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446956892_553,visua1,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446970700_717,American cool,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766446985524_850,Carducci,,Monturas,190.00,0.00,1,5,STOCK BAJO,190.00
+PROD_1766447000380_985,Gardelia,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447013428_556,Ferreti,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447027628_64,Dulag,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447043765_512,Kosvi,,Monturas,130.00,0.00,3,5,STOCK BAJO,390.00
+PROD_1766447072684_975,Carlos rossi,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447090172_674,j&j,,Monturas,140.00,0.00,2,5,STOCK BAJO,280.00
+PROD_1766447129052_97,Giorgio Rodricci,,Monturas,140.00,0.00,7,5,EN STOCK,980.00
+PROD_1766447153396_768,Vertigo,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447165996_424,Forux,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447193909_161,Bets view,,Monturas,130.00,0.00,2,5,STOCK BAJO,260.00
+PROD_1766447210669_228,Europtics,,Monturas,130.00,0.00,2,5,STOCK BAJO,260.00
+PROD_1766447222468_659,Silmo,,Monturas,140.00,0.00,2,5,STOCK BAJO,280.00
+PROD_1766447236425_45,Gabello,,Monturas,140.00,0.00,5,5,STOCK BAJO,700.00
+PROD_1766447252772_648,Caroline fine,,Monturas,140.00,0.00,3,5,STOCK BAJO,420.00
+PROD_1766447267620_30,r&r,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447282501_799,Amauri,,Monturas,140.00,0.00,2,5,STOCK BAJO,280.00
+PROD_1766447308708_155,Rovert,,Monturas,140.00,0.00,2,5,STOCK BAJO,280.00
+PROD_1766447323982_450,gino,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447335541_772,momo,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447347612_181,ferioni,,Monturas,140.00,0.00,3,5,STOCK BAJO,420.00
+PROD_1766447360892_383,masaki,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447376069_934,nikitana,,Monturas,140.00,0.00,2,5,STOCK BAJO,280.00
+PROD_1766447387517_797,olive,,Monturas,130.00,0.00,1,5,STOCK BAJO,130.00
+PROD_1766447453261_846,hugo dalecio,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447488509_497,Sobre lente,,Monturas,150.00,0.00,52,5,EN STOCK,7800.00
+PROD_1766447512237_589,Deivis rouss,,Monturas,140.00,0.00,1,5,STOCK BAJO,140.00
+PROD_1766447537597_839,Promoción metal,,Monturas,80.00,0.00,63,5,EN STOCK,5040.00
+PROD_1766447558878_455,Promoción carei,,Monturas,80.00,0.00,63,5,EN STOCK,5040.00
+,,,,,,,,VALOR TOTAL,497022.00

@@ -1,0 +1,131 @@
+===============================================
+   CENTRO OPTICO SICUANI - INSTRUCCIONES
+   Sistema de Gestion Integral v5 Purple
+===============================================
+
+FORMAS DE ABRIR EL SISTEMA:
+============================
+
+OPCION 1 - FACIL (Recomendada)
+-------------------------------
+Doble clic en: INICIAR_SISTEMA.bat
+- Te permitira elegir el navegador
+- Funciona con Chrome, Edge, Brave o navegador por defecto
+
+OPCION 2 - ABRIR EN NAVEGADOR ESPECIFICO
+-----------------------------------------
+Doble clic en el archivo correspondiente:
+- Abrir_en_Chrome.bat   (Para Google Chrome)
+- Abrir_en_Edge.bat     (Para Microsoft Edge)
+- Abrir_en_Brave.bat    (Para Brave Browser)
+
+OPCION 3 - SERVIDOR LOCAL (Mejor rendimiento)
+----------------------------------------------
+Doble clic en: Iniciar_Servidor_Local.bat
+- Inicia un servidor HTTP local
+- Abre tu navegador y ve a: http://localhost:8000/Centro_Optico_Sicuani_v5_Purple.html
+- MANTENER LA VENTANA ABIERTA mientras uses el sistema
+- Requiere Python instalado (descarga en https://www.python.org)
+
+OPCION 4 - DOBLE CLIC DIRECTO
+------------------------------
+Doble clic en: Centro_Optico_Sicuani_v5_Purple.html
+- Se abrira en tu navegador por defecto
+- Puede que algunos navegadores bloqueen localStorage
+
+
+CREDENCIALES DE ACCESO:
+=======================
+El sistema tiene AUTO-LOGIN activado.
+Si cierras sesion, usa estas credenciales:
+
+Opcion 1:
+- Usuario: Centro Optico Sicuani
+- Password: ADMI
+- Establecimiento: Centro Optico Sicuani
+
+Opcion 2:
+- Usuario: Optica Sicuani
+- Password: ADMI
+- Establecimiento: Optica Sicuani
+
+
+DATOS DE EJEMPLO:
+=================
+El sistema crea automaticamente 3 clientes de prueba:
+
+1. Aldo Mendoza Huaman (DNI: 12345678)
+2. Maria Garcia Lopez (DNI: 87654321)
+3. Juan Perez Rodriguez (DNI: 45678912)
+
+
+FUNCIONALIDADES PRINCIPALES:
+=============================
+
+1. VENTAS
+   - Crear nueva venta
+   - Generar prescripciones (Nueva RX)
+   - Imprimir recibos
+
+2. CLIENTES
+   - Registrar nuevos clientes
+   - Buscar clientes existentes
+   - Ver historial de compras
+
+3. CONSULTORIO
+   - Buscar pacientes
+   - Realizar examenes clinicos
+   - Pestanas: Medidas, LC, Otros, Historial, Oftalmologia
+
+4. INVENTARIO
+   - Control de stock
+   - Registro de productos
+
+5. REPORTES
+   - Ventas diarias
+   - Estadisticas
+   - Exportar datos
+
+
+COMPATIBILIDAD:
+===============
+✓ Google Chrome (Recomendado)
+✓ Microsoft Edge
+✓ Brave Browser
+✓ Mozilla Firefox
+✓ Opera
+✓ Safari
+
+NOTA: Para mejor rendimiento, usa Chrome o Edge
+
+
+SOLUCION DE PROBLEMAS:
+======================
+
+Problema: "No puedo ver las pestanas de Medidas, LC, etc."
+Solucion: El modal ahora es mas grande (1050x700px). Asegurate de tener resolucion minima de 1366x768
+
+Problema: "La busqueda no funciona"
+Solucion: Escribe al menos 2 caracteres. Prueba con "Aldo" o "12345678"
+
+Problema: "No guarda los datos"
+Solucion:
+- Usa el servidor local (Iniciar_Servidor_Local.bat)
+- O abre desde Chrome/Edge con permisos de localStorage
+
+Problema: "Aparece pantalla en blanco"
+Solucion: Presiona F5 para recargar. El sistema hace auto-login automaticamente.
+
+
+SOPORTE:
+========
+Si tienes problemas, verifica:
+1. Resolucion de pantalla minima: 1366x768
+2. Navegador actualizado
+3. JavaScript habilitado
+4. Presiona F12 y revisa la consola para ver mensajes de debug
+
+
+VERSION: 5.0 Purple Edition
+FECHA: Noviembre 2025
+===============================================
