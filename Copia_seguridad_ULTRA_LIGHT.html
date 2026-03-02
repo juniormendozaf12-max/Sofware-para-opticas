@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Centro Óptico Sicuani - Sistema Completo v5</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Seguridad: Content Security Policy -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self';">
 <!-- ULTRA LOW-END: Nuclear CSS override — zero visual effects, max performance -->
 <style id="lowEndOptimizations">
 /* ═══ ULTRA LOW-END NUCLEAR OVERRIDE ═══
@@ -12266,8 +12268,8 @@ const ROLES = {
   VENDEDOR: 'VENDEDOR'
 };
 
-// Código especial del dueño para acciones restringidas
-const CODIGO_DUENO = '1234';
+// Código especial del dueño para acciones restringidas (hash SHA-256)
+const CODIGO_DUENO_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
 
 // Función para obtener credenciales dinámicas desde DB.USUARIOS
 function obtenerCredencialesDinamicas() {
@@ -12304,13 +12306,14 @@ function obtenerCredencialesDinamicas() {
   });
 
   usuariosDB = usuariosUnicos;
-// LOW-END removed
+  // [SEGURIDAD] Logs de credenciales eliminados
 
+  const _ADMIN_HASH = '1102c7a6c1f40dc3d30abcceb73a9a430ca7ccfd966716ca235256f6f51a6291'; // SHA-256
   const credencialesDinamicas = {
     'DOS_DE_MAYO': {
       ADMINISTRADOR: {
         usuario: 'Centro Óptico Sicuani',
-        password: 'ADMI',
+        passwordHash: _ADMIN_HASH,
         rol: ROLES.ADMINISTRADOR,
         nombreMostrar: 'Dos de Mayo',
         nombreCompleto: 'Administrador Centro Óptico'
@@ -12320,7 +12323,7 @@ function obtenerCredencialesDinamicas() {
     'PLAZA_DE_ARMAS': {
       ADMINISTRADOR: {
         usuario: 'Óptica Sicuani',
-        password: 'ADMI',
+        passwordHash: _ADMIN_HASH,
         rol: ROLES.ADMINISTRADOR,
         nombreMostrar: 'Plaza de Armas',
         nombreCompleto: 'Administrador Óptica'
@@ -12330,24 +12333,20 @@ function obtenerCredencialesDinamicas() {
   };
 
   // Cargar usuarios de DB.USUARIOS como vendedores
-// LOW-END removed
-// LOW-END removed
-
   usuariosDB.forEach((u, index) => {
 
     // CRITERIO FLEXIBLE: Incluir usuarios HABILITADOS que sean vendedores O que tengan grupo VENTAS
     const esVendedorValido = u.estado === 'HABILITADO' && (u.esVendedor === true || u.grupo === 'VENTAS');
 
     if (esVendedorValido) {
-// LOW-END removed
-
+      const rawPass = u.password || '1234';
       const vendedor = {
         usuario: u.username || u.nombres || 'USER',
-        password: u.password || '1234', // Password por defecto si no tiene
+        passwordHash: CryptoEngine.hashSHA256(rawPass),
         rol: ROLES.VENDEDOR,
         nombreCompleto: u.nombres || u.username,
         activo: true,
-        dbId: u.id // Guardar ID de la DB para referencia
+        dbId: u.id
       };
 
       // Asignar a todos los establecimientos por ahora
@@ -12364,11 +12363,10 @@ function obtenerCredencialesDinamicas() {
     // Fallback: Cargar TODOS los usuarios habilitados como posibles vendedores
     usuariosDB.forEach(u => {
       if (u.estado === 'HABILITADO') {
-// LOW-END removed
-
+        const rawPass2 = u.password || '1234';
         const vendedor = {
           usuario: u.username || u.nombres || 'USER',
-          password: u.password || '1234',
+          passwordHash: CryptoEngine.hashSHA256(rawPass2),
           rol: ROLES.VENDEDOR,
           nombreCompleto: u.nombres || u.username,
           activo: true,
@@ -12392,7 +12390,7 @@ let CREDENCIALES = {
   'DOS_DE_MAYO': {
     ADMINISTRADOR: {
       usuario: 'Centro Óptico Sicuani',
-      password: 'ADMI',
+      passwordHash: '1102c7a6c1f40dc3d30abcceb73a9a430ca7ccfd966716ca235256f6f51a6291',
       rol: ROLES.ADMINISTRADOR,
       nombreMostrar: 'Dos de Mayo',
       nombreCompleto: 'Administrador Centro Óptico'
@@ -12402,7 +12400,7 @@ let CREDENCIALES = {
   'PLAZA_DE_ARMAS': {
     ADMINISTRADOR: {
       usuario: 'Óptica Sicuani',
-      password: 'ADMI',
+      passwordHash: '1102c7a6c1f40dc3d30abcceb73a9a430ca7ccfd966716ca235256f6f51a6291',
       rol: ROLES.ADMINISTRADOR,
       nombreMostrar: 'Plaza de Armas',
       nombreCompleto: 'Administrador Óptica'
@@ -12606,7 +12604,7 @@ function verificarCodigoDueno() {
   const input = document.getElementById('codigoDuenoInput');
   const codigo = input?.value || '';
 
-  if (codigo === CODIGO_DUENO) {
+  if (CryptoEngine.hashSHA256(codigo) === CODIGO_DUENO_HASH) {
     cerrarModalCodigoDueno(true);
     toast('✅ Código correcto - Acción autorizada', 'success');
   } else {
@@ -12753,11 +12751,26 @@ function cambiarTemaLogin(establecimiento) {
 }
 
 // Función para intentar login
+// Rate limiting anti-fuerza bruta
+let _loginFallidos = 0;
+let _loginBloqueadoHasta = 0;
+const _MAX_INTENTOS = 5;
+const _BLOQUEO_MS = 60000; // 1 minuto
+
 function intentarLogin() {
+  const errorDiv = document.getElementById('loginError');
+
+  // Verificar bloqueo por intentos fallidos
+  if (_loginBloqueadoHasta > Date.now()) {
+    const segs = Math.ceil((_loginBloqueadoHasta - Date.now()) / 1000);
+    errorDiv.textContent = '🔒 Cuenta bloqueada. Espere ' + segs + ' segundos.';
+    errorDiv.classList.add('show');
+    return;
+  }
+
   const rol = document.getElementById('loginRol').value;
   const establecimiento = document.getElementById('loginEstablecimiento').value;
   const password = document.getElementById('loginPassword').value;
-  const errorDiv = document.getElementById('loginError');
 
   let usuario = '';
 
@@ -12793,7 +12806,7 @@ function intentarLogin() {
     return;
   }
 
-// LOW-END removed
+  // [SEGURIDAD] No loguear datos de login
 
   // 🔄 SINCRONIZACIÓN: Recargar credenciales antes de validar login (asegura datos más recientes)
   CREDENCIALES = obtenerCredencialesDinamicas();
@@ -12809,13 +12822,15 @@ function intentarLogin() {
 
   let usuarioEncontrado = null;
 
-  // Verificar según el rol
+  // Verificar según el rol (passwords hasheadas con SHA-256)
+  const inputHash = CryptoEngine.hashSHA256(password);
+
   if (rol === 'ADMINISTRADOR') {
     const admin = credencialesEstablecimiento.ADMINISTRADOR;
     const usuarioAdminNormalizado = normalizeText(admin.usuario);
     const usuarioIngresadoNormalizado = normalizeText(usuario);
 
-    if (usuarioIngresadoNormalizado === usuarioAdminNormalizado && admin.password === password) {
+    if (usuarioIngresadoNormalizado === usuarioAdminNormalizado && admin.passwordHash === inputHash) {
       usuarioEncontrado = {
         usuario: admin.usuario,
         nombreCompleto: admin.nombreCompleto,
@@ -12825,54 +12840,63 @@ function intentarLogin() {
       };
     }
   } else if (rol === 'VENDEDOR') {
-
     const vendedor = credencialesEstablecimiento.VENDEDORES?.find(v => {
       const coincideUsuario = v.usuario.toUpperCase() === usuario.toUpperCase();
-      const coincidePassword = v.password === password;
-      const estaActivo = v.activo;
-
-
-      return coincideUsuario && coincidePassword && estaActivo;
+      const coincidePassword = v.passwordHash === inputHash;
+      return coincideUsuario && coincidePassword && v.activo;
     });
 
     if (vendedor) {
-// LOW-END removed
-
       usuarioEncontrado = {
         usuario: vendedor.usuario,
         nombreCompleto: vendedor.nombreCompleto,
         rol: vendedor.rol,
         establecimiento: establecimiento,
         nombreMostrar: credencialesEstablecimiento.ADMINISTRADOR.nombreMostrar,
-        dbId: vendedor.dbId // Incluir referencia a DB
+        dbId: vendedor.dbId
       };
-    } else {
-// LOW-END removed
     }
   }
 
   // Verificar si se encontró el usuario
   if (!usuarioEncontrado) {
-    errorDiv.textContent = '❌ Contraseña incorrecta';
+    _loginFallidos++;
+    if (_loginFallidos >= _MAX_INTENTOS) {
+      _loginBloqueadoHasta = Date.now() + _BLOQUEO_MS;
+      errorDiv.textContent = '🔒 Demasiados intentos. Bloqueado por 60 segundos.';
+      _loginFallidos = 0;
+    } else {
+      errorDiv.textContent = '❌ Contraseña incorrecta (' + (_MAX_INTENTOS - _loginFallidos) + ' intentos restantes)';
+    }
     errorDiv.classList.add('show');
-// LOW-END removed
     return;
   }
 
-  // Login exitoso
+  // Login exitoso — resetear intentos fallidos
+  _loginFallidos = 0;
   establecimientoActual = establecimiento;
   usuarioActual = usuarioEncontrado;
 
-// LOW-END removed
+  // [SEGURIDAD] Login exitoso — no loguear datos de usuario
 
-  // Guardar sesión
-  localStorage.setItem('optica_sesion', JSON.stringify({
+  // Guardar sesión firmada con hash de integridad
+  const _SESSION_SECRET = 'OptiAbi_S3ss10n_K3y_2024!';
+  const sessionPayload = {
     establecimiento: establecimiento,
     usuario: usuarioEncontrado.usuario,
     rol: usuarioEncontrado.rol,
     nombreCompleto: usuarioEncontrado.nombreCompleto,
-    timestamp: Date.now()
-  }));
+    timestamp: Date.now(),
+    expira: Date.now() + (8 * 60 * 60 * 1000) // 8 horas
+  };
+  sessionPayload._sig = CryptoEngine.hashSHA256(JSON.stringify({
+    e: sessionPayload.establecimiento,
+    u: sessionPayload.usuario,
+    r: sessionPayload.rol,
+    t: sessionPayload.timestamp,
+    x: sessionPayload.expira
+  }) + _SESSION_SECRET);
+  localStorage.setItem('optica_sesion', JSON.stringify(sessionPayload));
 
   // Ocultar login y mostrar sistema
   const loginOverlay = document.getElementById('loginOverlay');
@@ -13369,15 +13393,38 @@ function cerrarSesion() {
   toast('Sesión cerrada');
 }
 
-// Verificar sesión existente al cargar
+// Verificar sesión existente al cargar (con firma de integridad)
 function verificarSesion() {
   const sesionGuardada = localStorage.getItem('optica_sesion');
 
   if (sesionGuardada) {
     try {
       const sesion = JSON.parse(sesionGuardada);
-      // Verificar que la sesión no sea muy antigua (24 horas)
-      if (Date.now() - sesion.timestamp < 24 * 60 * 60 * 1000) {
+
+      // Verificar expiración (8 horas o fallback 24h)
+      const expira = sesion.expira || (sesion.timestamp + 24 * 60 * 60 * 1000);
+      if (Date.now() > expira) {
+        localStorage.removeItem('optica_sesion');
+        return false;
+      }
+
+      // Verificar firma de integridad (si existe)
+      if (sesion._sig) {
+        const _SESSION_SECRET = 'OptiAbi_S3ss10n_K3y_2024!';
+        const expectedSig = CryptoEngine.hashSHA256(JSON.stringify({
+          e: sesion.establecimiento,
+          u: sesion.usuario,
+          r: sesion.rol,
+          t: sesion.timestamp,
+          x: sesion.expira
+        }) + _SESSION_SECRET);
+        if (sesion._sig !== expectedSig) {
+          localStorage.removeItem('optica_sesion');
+          return false;
+        }
+      }
+
+      if (sesion.establecimiento && sesion.usuario) {
         establecimientoActual = sesion.establecimiento;
         usuarioActual = sesion.usuario;
 
@@ -13813,32 +13860,187 @@ async function subirDatosSupabase() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// 🔐 CRYPTO ENGINE — Encriptación de datos + Hash de passwords
+// ═══════════════════════════════════════════════════════════════
+const CryptoEngine = (function() {
+  'use strict';
+
+  // Clave de encriptación derivada (no es la password del usuario)
+  const _KEY = 'C3ntr0_0pt1c0_S1cu4n1_v7_2024_$ecur3!@#';
+  const _SALT = 'optiabi_salt_x9k2m';
+  const _PREFIX = 'ENC::'; // Marca datos encriptados
+
+  // XOR cipher sincrónico (rápido, no bloquea UI)
+  function _deriveKeyBytes(key, salt) {
+    let combined = key + salt;
+    let bytes = [];
+    for (let i = 0; i < 64; i++) {
+      let h = 0;
+      for (let j = 0; j < combined.length; j++) {
+        h = ((h << 5) - h + combined.charCodeAt(j)) | 0;
+      }
+      bytes.push(Math.abs(h % 256));
+      combined = String.fromCharCode((combined.charCodeAt(0) + i + 7) % 65536) + combined;
+    }
+    return bytes;
+  }
+
+  const _keyBytes = _deriveKeyBytes(_KEY, _SALT);
+
+  // Encriptar string → string base64 con prefijo
+  function encrypt(plaintext) {
+    if (!plaintext || typeof plaintext !== 'string') return plaintext;
+    try {
+      let result = [];
+      for (let i = 0; i < plaintext.length; i++) {
+        result.push(plaintext.charCodeAt(i) ^ _keyBytes[i % _keyBytes.length]);
+      }
+      return _PREFIX + btoa(String.fromCharCode.apply(null, result));
+    } catch (e) {
+      return plaintext;
+    }
+  }
+
+  // Desencriptar string base64 → string original
+  function decrypt(ciphertext) {
+    if (!ciphertext || typeof ciphertext !== 'string') return ciphertext;
+    if (!ciphertext.startsWith(_PREFIX)) return ciphertext; // No encriptado (migración)
+    try {
+      const encoded = ciphertext.slice(_PREFIX.length);
+      const decoded = atob(encoded);
+      let result = [];
+      for (let i = 0; i < decoded.length; i++) {
+        result.push(decoded.charCodeAt(i) ^ _keyBytes[i % _keyBytes.length]);
+      }
+      return String.fromCharCode.apply(null, result);
+    } catch (e) {
+      return ciphertext;
+    }
+  }
+
+  // SHA-256 hash sincrónico (implementación pura JS)
+  function hashSHA256(message) {
+    // Constantes SHA-256
+    const K = [
+      0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+      0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+      0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+      0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+      0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+      0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+      0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+      0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+    ];
+
+    function rr(v, n) { return (v >>> n) | (v << (32 - n)); }
+
+    // Pre-process
+    const msg = unescape(encodeURIComponent(message));
+    const len = msg.length;
+    const bytes = [];
+    for (let i = 0; i < len; i++) bytes.push(msg.charCodeAt(i));
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    const bitLen = len * 8;
+    for (let i = 56; i >= 0; i -= 8) bytes.push((bitLen / Math.pow(2, i)) & 0xff);
+
+    // Init hash values
+    let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+    let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+
+    // Process blocks
+    for (let offset = 0; offset < bytes.length; offset += 64) {
+      const w = new Array(64);
+      for (let i = 0; i < 16; i++) {
+        w[i] = (bytes[offset + i * 4] << 24) | (bytes[offset + i * 4 + 1] << 16) |
+               (bytes[offset + i * 4 + 2] << 8) | bytes[offset + i * 4 + 3];
+      }
+      for (let i = 16; i < 64; i++) {
+        const s0 = rr(w[i-15], 7) ^ rr(w[i-15], 18) ^ (w[i-15] >>> 3);
+        const s1 = rr(w[i-2], 17) ^ rr(w[i-2], 19) ^ (w[i-2] >>> 10);
+        w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0;
+      }
+
+      let a=h0, b=h1, c=h2, d=h3, e=h4, f=h5, g=h6, h=h7;
+      for (let i = 0; i < 64; i++) {
+        const S1 = rr(e, 6) ^ rr(e, 11) ^ rr(e, 25);
+        const ch = (e & f) ^ (~e & g);
+        const t1 = (h + S1 + ch + K[i] + w[i]) | 0;
+        const S0 = rr(a, 2) ^ rr(a, 13) ^ rr(a, 22);
+        const maj = (a & b) ^ (a & c) ^ (b & c);
+        const t2 = (S0 + maj) | 0;
+        h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+      }
+      h0=(h0+a)|0; h1=(h1+b)|0; h2=(h2+c)|0; h3=(h3+d)|0;
+      h4=(h4+e)|0; h5=(h5+f)|0; h6=(h6+g)|0; h7=(h7+h)|0;
+    }
+
+    // Hex output
+    function hex(v) { return ('00000000' + (v >>> 0).toString(16)).slice(-8); }
+    return hex(h0)+hex(h1)+hex(h2)+hex(h3)+hex(h4)+hex(h5)+hex(h6)+hex(h7);
+  }
+
+  // Verificar si un string está encriptado
+  function isEncrypted(str) {
+    return typeof str === 'string' && str.startsWith(_PREFIX);
+  }
+
+  return { encrypt, decrypt, hashSHA256, isEncrypted };
+})();
+
+// Función global de sanitización XSS
+function sanitizeHTML(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];
+  });
+}
+// ═══ FIN CRYPTO ENGINE ═══
+
 // ══════════════════════════════════════════════════════════
-// LOAD / SAVE — con sync a Supabase
+// LOAD / SAVE — con sync a Supabase + encriptación
 // ══════════════════════════════════════════════════════════
 
 function load(key) {
   try {
     if (useLocalStorage) {
-      return JSON.parse(localStorage.getItem(key) || '[]');
+      const raw = localStorage.getItem(key);
+      if (!raw) return [];
+      // Intentar desencriptar si tiene prefijo ENC::
+      const decrypted = CryptoEngine.isEncrypted(raw) ? CryptoEngine.decrypt(raw) : raw;
+      const parsed = JSON.parse(decrypted);
+      // Si estaba sin encriptar, re-guardar encriptado (migración automática)
+      if (!CryptoEngine.isEncrypted(raw) && key.startsWith('optica_')) {
+        localStorage.setItem(key, CryptoEngine.encrypt(decrypted));
+      }
+      return parsed;
     } else {
       return memoryStorage[key] || [];
     }
-  } catch(e) {
-    return [];
+  } catch (e) {
+    // Si falla el decrypt/parse, intentar como JSON plano
+    try {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e2) {
+      return [];
+    }
   }
 }
 
 function save(key, data) {
   try {
+    const jsonStr = JSON.stringify(data);
     if (useLocalStorage) {
-      localStorage.setItem(key, JSON.stringify(data));
+      // Encriptar antes de guardar
+      localStorage.setItem(key, CryptoEngine.encrypt(jsonStr));
     } else {
       memoryStorage[key] = data;
     }
-    // Sync async a Supabase (no bloquea la UI)
+    // Sync async a Supabase (envía datos sin encriptar al cloud)
     SupabaseSync.pushToCloud(key, data);
-  } catch(e) {
+  } catch (e) {
+    // Fallback a memoria
     memoryStorage[key] = data;
   }
 }
@@ -23348,8 +23550,8 @@ function editarCeldaStock(material, serie, sph, cyl) {
     return;
   }
 
-  // Validar contrasena contra CODIGO_DUENO
-  if (password === CODIGO_DUENO) {
+  // Validar contrasena contra CODIGO_DUENO (hash SHA-256)
+  if (CryptoEngine.hashSHA256(password) === CODIGO_DUENO_HASH) {
     toast('Acceso concedido', 'success');
     mostrarModalEdicionStock(material, serie, sph, cyl);
   } else {
