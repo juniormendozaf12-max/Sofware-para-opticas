@@ -14475,6 +14475,33 @@
     // Código especial del dueño para acciones restringidas (hash SHA-256)
     const CODIGO_DUENO_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
 
+    // Secreto para firma de sesión (definido UNA sola vez, usado en login + verificarSesion)
+    const _SESSION_SECRET = 'OptiAbi_S3ss10n_K3y_2024!_v7_IntegrityGuard';
+
+    // Rate Limiter genérico — protege login, código dueño, y cualquier endpoint sensible
+    const RateLimiter = {
+      _stores: {},
+      check: function(key, maxAttempts, windowMs) {
+        maxAttempts = maxAttempts || 5;
+        windowMs = windowMs || 60000;
+        const now = Date.now();
+        if (!this._stores[key]) this._stores[key] = [];
+        this._stores[key] = this._stores[key].filter(function(t) { return now - t < windowMs; });
+        if (this._stores[key].length >= maxAttempts) return false;
+        this._stores[key].push(now);
+        return true;
+      },
+      remaining: function(key, maxAttempts, windowMs) {
+        maxAttempts = maxAttempts || 5;
+        windowMs = windowMs || 60000;
+        const now = Date.now();
+        if (!this._stores[key]) return maxAttempts;
+        const recent = this._stores[key].filter(function(t) { return now - t < windowMs; });
+        return Math.max(0, maxAttempts - recent.length);
+      },
+      reset: function(key) { delete this._stores[key]; }
+    };
+
     // Función para obtener credenciales dinámicas desde DB.USUARIOS
     function obtenerCredencialesDinamicas() {
 
@@ -14589,7 +14616,7 @@
       'DOS_DE_MAYO': {
         ADMINISTRADOR: {
           usuario: 'Centro Óptico Sicuani',
-          password: 'ADMI',
+          passwordHash: '1102c7a6c1f40dc3d30abcceb73a9a430ca7ccfd966716ca235256f6f51a6291',
           rol: ROLES.ADMINISTRADOR,
           nombreMostrar: 'Dos de Mayo',
           nombreCompleto: 'Administrador Centro Óptico'
@@ -14599,7 +14626,7 @@
       'PLAZA_DE_ARMAS': {
         ADMINISTRADOR: {
           usuario: 'Óptica Sicuani',
-          password: 'ADMI',
+          passwordHash: '1102c7a6c1f40dc3d30abcceb73a9a430ca7ccfd966716ca235256f6f51a6291',
           rol: ROLES.ADMINISTRADOR,
           nombreMostrar: 'Plaza de Armas',
           nombreCompleto: 'Administrador Óptica'
@@ -14756,7 +14783,7 @@
           FUNCIÓN RESTRINGIDA
         </h2>
         <p style="color: #64748b; font-size: 15px; line-height: 1.6;">
-          La acción <strong>"${accion}"</strong> requiere autorización del administrador del sistema.
+          La acción <strong>"${typeof sanitizeHTML === 'function' ? sanitizeHTML(accion) : accion}"</strong> requiere autorización del administrador del sistema.
         </p>
       </div>
 
@@ -14803,11 +14830,21 @@
       const input = document.getElementById('codigoDuenoInput');
       const codigo = input?.value || '';
 
+      // Rate limiting: máx 5 intentos por minuto
+      if (!RateLimiter.check('codigo_dueno', 5, 60000)) {
+        const restante = 60 - Math.floor((Date.now() - Math.min.apply(null, RateLimiter._stores['codigo_dueno'])) / 1000);
+        toast('🔒 Demasiados intentos. Espere ' + Math.max(1, restante) + 's', 'error');
+        input.value = '';
+        return;
+      }
+
       if (CryptoEngine.hashSHA256(codigo) === CODIGO_DUENO_HASH) {
+        RateLimiter.reset('codigo_dueno');
         cerrarModalCodigoDueno(true);
         toast('✅ Código correcto - Acción autorizada', 'success');
       } else {
-        toast('❌ Código incorrecto', 'error');
+        const restantes = RateLimiter.remaining('codigo_dueno', 5, 60000);
+        toast('❌ Código incorrecto' + (restantes <= 2 ? ' (' + restantes + ' intentos restantes)' : ''), 'error');
         input.value = '';
         input.focus();
       }
@@ -15078,8 +15115,7 @@
 
       // [SEGURIDAD] Login exitoso — no loguear datos de usuario
 
-      // Guardar sesión firmada con hash de integridad
-      const _SESSION_SECRET = 'OptiAbi_S3ss10n_K3y_2024!';
+      // Guardar sesión firmada con hash de integridad (encriptada en localStorage)
       const sessionPayload = {
         establecimiento: establecimiento,
         usuario: usuarioEncontrado.usuario,
@@ -15095,7 +15131,7 @@
         t: sessionPayload.timestamp,
         x: sessionPayload.expira
       }) + _SESSION_SECRET);
-      localStorage.setItem('optica_sesion', JSON.stringify(sessionPayload));
+      localStorage.setItem('optica_sesion', CryptoEngine.encrypt(JSON.stringify(sessionPayload)));
 
       // Ocultar login y mostrar sistema
       const loginOverlay = document.getElementById('loginOverlay');
@@ -15111,7 +15147,7 @@
       // Actualizar badge según rol
       if (badge) {
         if (usuarioActual.rol === ROLES.VENDEDOR) {
-          badge.innerHTML = `👤 VENDEDOR: ${usuarioActual.nombreCompleto} - <span style="color: #f59e0b;">MODO LECTURA</span>`;
+          badge.innerHTML = `👤 VENDEDOR: ${sanitizeHTML(usuarioActual.nombreCompleto)} - <span style="color: #f59e0b;">MODO LECTURA</span>`;
           badge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
         } else {
           badge.textContent = '🏪 ' + usuarioActual.nombreMostrar;
@@ -15138,11 +15174,15 @@
       if (usuarioActual.rol === ROLES.VENDEDOR) {
         mostrarMensajeBienvenidaVendedor();
       } else {
-        toast('✅ Bienvenido, ' + usuarioActual.nombreCompleto, 'success');
+        toast('✅ Bienvenido, ' + sanitizeHTML(usuarioActual.nombreCompleto), 'success');
       }
 
       // Verificar stock bajo después de login
       setTimeout(verificarStockBajoAlerta, 2000);
+
+      // Activar guardia de seguridad: auto-logout por inactividad + integrity check
+      SecurityGuard.start();
+      SecurityGuard.integrityCheck();
     }
 
     // Alerta automática de stock bajo al iniciar sesión
@@ -15177,6 +15217,88 @@
       } catch (e) { /* no critical */ }
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // 🛡️ AUTO-LOGOUT POR INACTIVIDAD + ANTI-TAMPERING
+    // ═══════════════════════════════════════════════════════════════
+    const SecurityGuard = (function() {
+      'use strict';
+      const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutos
+      const WARNING_BEFORE = 5 * 60 * 1000;    // Aviso 5 min antes
+      let _lastActivity = Date.now();
+      let _checkInterval = null;
+      let _warningShown = false;
+      let _warningBanner = null;
+
+      function resetActivity() { _lastActivity = Date.now(); _dismissWarning(); }
+
+      function _dismissWarning() {
+        if (_warningBanner && _warningBanner.parentNode) {
+          _warningBanner.remove();
+          _warningBanner = null;
+        }
+        _warningShown = false;
+      }
+
+      function _showWarning(minutesLeft) {
+        if (_warningShown) return;
+        _warningShown = true;
+        _warningBanner = document.createElement('div');
+        _warningBanner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;padding:12px 24px;text-align:center;font-weight:700;font-size:14px;cursor:pointer;';
+        _warningBanner.textContent = '⚠️ Sesión se cerrará en ' + minutesLeft + ' minutos por inactividad. Haga clic aquí para continuar.';
+        _warningBanner.onclick = function() { resetActivity(); if (typeof toast === 'function') toast('✅ Sesión extendida', 'success'); };
+        document.body.appendChild(_warningBanner);
+      }
+
+      function _forceLogout() {
+        _stop();
+        localStorage.removeItem('optica_sesion');
+        if (typeof toast === 'function') toast('🔒 Sesión cerrada por inactividad', 'error');
+        setTimeout(function() { location.reload(); }, 1500);
+      }
+
+      function _check() {
+        if (!usuarioActual) return;
+        const elapsed = Date.now() - _lastActivity;
+        const remaining = INACTIVITY_LIMIT - elapsed;
+
+        if (remaining <= 0) {
+          _forceLogout();
+        } else if (remaining <= WARNING_BEFORE && !_warningShown) {
+          _showWarning(Math.ceil(remaining / 60000));
+        }
+      }
+
+      function start() {
+        if (_checkInterval) return;
+        _lastActivity = Date.now();
+        ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(evt) {
+          document.addEventListener(evt, resetActivity, { passive: true });
+        });
+        _checkInterval = setInterval(_check, 30000);
+      }
+
+      function _stop() {
+        if (_checkInterval) { clearInterval(_checkInterval); _checkInterval = null; }
+        _dismissWarning();
+        ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(evt) {
+          document.removeEventListener(evt, resetActivity);
+        });
+      }
+
+      function integrityCheck() {
+        try {
+          if (typeof CryptoEngine === 'undefined' || typeof CryptoEngine.hashSHA256 !== 'function') {
+            console.error('[SECURITY] CryptoEngine ha sido alterado o eliminado');
+            return false;
+          }
+          return true;
+        } catch (e) { return false; }
+      }
+
+      return { start: start, resetActivity: resetActivity, integrityCheck: integrityCheck };
+    })();
+    // ═══ FIN SECURITY GUARD ═══
+
     // Función para mostrar mensaje de bienvenida al vendedor
     function mostrarMensajeBienvenidaVendedor() {
       const modal = document.createElement('div');
@@ -15207,7 +15329,7 @@
       <div style="text-align: center; margin-bottom: 30px;">
         <div style="font-size: 64px; margin-bottom: 16px;">👋</div>
         <h2 style="font-size: 28px; font-weight: 900; color: #1e293b; margin-bottom: 8px;">
-          ¡Bienvenid${usuarioActual.nombreCompleto.includes('María') || usuarioActual.nombreCompleto.includes('Carmen') ? 'a' : 'o'} ${usuarioActual.nombreCompleto}!
+          ¡Bienvenid${usuarioActual.nombreCompleto.includes('María') || usuarioActual.nombreCompleto.includes('Carmen') ? 'a' : 'o'} ${sanitizeHTML(usuarioActual.nombreCompleto)}!
         </h2>
         <p style="color: #64748b; font-size: 16px;">
           Estás ingresando como <strong style="color: #10b981;">VENDEDOR/A</strong>
@@ -15589,13 +15711,17 @@
       toast('Sesión cerrada');
     }
 
-    // Verificar sesión existente al cargar (con firma de integridad)
+    // Verificar sesión existente al cargar (con firma de integridad + desencriptación)
     function verificarSesion() {
-      const sesionGuardada = localStorage.getItem('optica_sesion');
+      const sesionRaw = localStorage.getItem('optica_sesion');
 
-      if (sesionGuardada) {
+      if (sesionRaw) {
         try {
-          const sesion = JSON.parse(sesionGuardada);
+          // Desencriptar sesión (soporta sesiones antiguas sin encriptar)
+          const sesionStr = (typeof CryptoEngine !== 'undefined' && CryptoEngine.isEncrypted(sesionRaw))
+            ? CryptoEngine.decrypt(sesionRaw)
+            : sesionRaw;
+          const sesion = JSON.parse(sesionStr);
 
           // Verificar expiración (8 horas o fallback 24h)
           const expira = sesion.expira || (sesion.timestamp + 24 * 60 * 60 * 1000);
@@ -15606,7 +15732,6 @@
 
           // Verificar firma de integridad (si existe)
           if (sesion._sig) {
-            const _SESSION_SECRET = 'OptiAbi_S3ss10n_K3y_2024!';
             const expectedSig = CryptoEngine.hashSHA256(JSON.stringify({
               e: sesion.establecimiento,
               u: sesion.usuario,
@@ -15615,6 +15740,7 @@
               x: sesion.expira
             }) + _SESSION_SECRET);
             if (sesion._sig !== expectedSig) {
+              console.warn('[SECURITY] Sesión con firma inválida detectada — posible tampering');
               localStorage.removeItem('optica_sesion');
               return false;
             }
@@ -36459,7 +36585,7 @@ padding: 20px;
 
       if (errores.length > 0) {
         divErrores.style.display = 'block';
-        listaErrores.innerHTML = errores.slice(0, 20).map(e => `<li>${e}</li>`).join('');
+        listaErrores.innerHTML = errores.slice(0, 20).map(e => `<li>${sanitizeHTML(e)}</li>`).join('');
         if (errores.length > 20) {
           listaErrores.innerHTML += `<li style="font-weight: 600;">... y ${errores.length - 20} errores más</li>`;
         }
@@ -44016,7 +44142,7 @@ padding: 20px;
       // Actualizar badge si existe
       const badge = document.getElementById('establecimientoBadge');
       if (badge) {
-        badge.innerHTML = `🏪 ${establecimientoActual ? CREDENCIALES[establecimientoActual].nombreMostrar : ''} - ${almacenActual}`;
+        badge.innerHTML = `🏪 ${establecimientoActual ? sanitizeHTML(CREDENCIALES[establecimientoActual].nombreMostrar) : ''} - ${sanitizeHTML(almacenActual)}`;
       }
     }
 
