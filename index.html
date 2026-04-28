@@ -9,6 +9,30 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Instant splash: visible in <50ms, hides when React renders -->
+    <div id="native-splash" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;gap:16px">
+      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#FF385C,#E31C5F);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,.12),0 6px 20px rgba(255,56,92,.25)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div style="font-family:system-ui,sans-serif;text-align:center">
+        <div style="font-size:20px;font-weight:800;color:#1a1a2e;letter-spacing:-.5px">Centro Optico</div>
+        <div style="font-size:11px;color:#999;margin-top:4px;font-weight:600">Cargando...</div>
+      </div>
+      <div style="width:32px;height:32px;border:3px solid #f0f0f0;border-top-color:#FF385C;border-radius:50%;animation:sp .7s linear infinite"></div>
+      <style>@keyframes sp{to{transform:rotate(360deg)}}</style>
+    </div>
+    <script>
+      // Remove splash once React paints
+      const _ro = new MutationObserver(() => {
+        const root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          const s = document.getElementById('native-splash');
+          if (s) { s.style.opacity = '0'; s.style.transition = 'opacity .25s'; setTimeout(() => s.remove(), 300); }
+          _ro.disconnect();
+        }
+      });
+      _ro.observe(document.getElementById('root'), { childList: true });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

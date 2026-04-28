@@ -31,7 +31,17 @@ export default defineConfig(({mode}) => {
             inlineDynamicImports: true,
           },
         },
-      } : {}),
+      } : {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'vendor-motion': ['motion/react'],
+              'vendor-pdf': ['jspdf', 'html2canvas'],
+              'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            },
+          },
+        },
+      }),
     },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
