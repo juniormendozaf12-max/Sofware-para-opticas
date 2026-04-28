@@ -23,7 +23,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import type { UserProfile, DashboardStats, Sale, Patient } from '../types';
-import { fetchDashboardData, onDataChange } from '../lib/services';
+import { fetchDashboardData, getCachedDashboardData, onDataChange } from '../lib/services';
 import { formatCurrency, cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { GradientCard } from './ui/gradient-card';
@@ -36,13 +36,20 @@ interface DashboardProps {
 const springBouncy = { type: 'spring' as const, stiffness: 400, damping: 28 };
 const springGentle = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
+const EMPTY_STATS: DashboardStats = {
+  dailySales: 0, dailySalesCount: 0, consultationsToday: 0, criticalStock: 0, totalPatients: 0,
+};
+
 export default function Dashboard({ user }: DashboardProps) {
   const navigate = useNavigate();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [todaySales, setTodaySales] = useState<Sale[]>([]);
-  const [recentPatients, setRecentPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+
+  // Try warm cache first → instant render with real data
+  const cached = getCachedDashboardData();
+
+  const [stats, setStats] = useState<DashboardStats>(cached?.stats ?? EMPTY_STATS);
+  const [todaySales, setTodaySales] = useState<Sale[]>(cached?.todaySales ?? []);
+  const [recentPatients, setRecentPatients] = useState<Patient[]>(cached?.recentPatients ?? []);
+  const [refreshing, setRefreshing] = useState(!cached); // subtle indicator if cache was cold
 
   const refreshData = useCallback(async () => {
     try {
@@ -56,7 +63,7 @@ export default function Dashboard({ user }: DashboardProps) {
   }, []);
 
   useEffect(() => {
-    (async () => { await refreshData(); setLoading(false); })();
+    refreshData().finally(() => setRefreshing(false));
   }, [refreshData]);
 
   useEffect(() => {
@@ -75,17 +82,6 @@ export default function Dashboard({ user }: DashboardProps) {
   };
 
   const firstName = user.name.split(' ')[0];
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-divider border-t-on-surface animate-spin" />
-          <span className="text-sm text-on-surface-variant font-medium">Cargando...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-7 pb-12">

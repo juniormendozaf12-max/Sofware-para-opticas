@@ -142,6 +142,24 @@ export function preloadCriticalData(): void {
   ]).catch(() => {});
 }
 
+/** Synchronous: return dashboard data from warm cache (or null if cold).
+ *  Used by Dashboard to render instantly without waiting for network. */
+export function getCachedDashboardData(): {
+  stats: DashboardStats;
+  todaySales: Sale[];
+  recentPatients: Patient[];
+} | null {
+  const est = getEstablecimiento();
+  const cc = _cache['clientes'];
+  const cp = _cache['productos'];
+  const cv = _cache['ventas'];
+  // Only return if ALL 3 keys are cached for the current store
+  if (!cc || cc.est !== est || !cp || cp.est !== est || !cv || cv.est !== est) return null;
+  try {
+    return _deriveDashboard(cc.data, cp.data, cv.data);
+  } catch { return null; }
+}
+
 /** Combined Dashboard data — single load of 3 keys, derives all needed data.
  *  Avoids the old pattern of fetchDashboardStats + fetchTodaySales + fetchPatients
  *  which internally called loadData 5 times (3 unique, with dedup now 3). */
@@ -166,7 +184,15 @@ export async function fetchDashboardData(): Promise<{
     loadData<any[]>('ventas'),
   ]);
 
-  // Stats
+  return _deriveDashboard(clientes, productos, ventas);
+}
+
+/** Pure derivation: compute dashboard data from raw arrays (no I/O) */
+function _deriveDashboard(clientes: any[], productos: any[], ventas: any[]): {
+  stats: DashboardStats;
+  todaySales: Sale[];
+  recentPatients: Patient[];
+} {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -187,12 +213,10 @@ export async function fetchDashboardData(): Promise<{
     totalPatients: clientes.filter((c: any) => c.estado !== 'D').length,
   };
 
-  // Today's sales mapped
   const todaySales = todayVentas
     .map(desktopToSale)
     .sort((a, b) => new Date(_localizeDate(b.date)).getTime() - new Date(_localizeDate(a.date)).getTime());
 
-  // Recent patients (top 5)
   const recentPatients = mapAndCachePatients(clientes).slice(0, 5);
 
   return { stats, todaySales, recentPatients };
