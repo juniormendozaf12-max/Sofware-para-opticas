@@ -1,28 +1,31 @@
+# ══════════════════════════════════════════════
+# Centro Optico Sicuani — .gitignore
+# ══════════════════════════════════════════════
+
+# Credenciales y secretos (NUNCA subir)
+.env
+.env.local
+.env.production
+
 # Sistema
 Thumbs.db
 desktop.ini
 .DS_Store
+*.swp
+*.swo
+*~
 
 # IDEs
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# Temporales
-*.tmp
-*.bak
-*.log
+*.code-workspace
 
 # Dependencies
 node_modules/
+.next/
 
 # Build output
 dist/
-
-# Environment
-.env
-.env.local
 
 # Large media files
 *.mp4
@@ -44,7 +47,19 @@ dist/
 _analyze*.cjs
 _build-standalone.cjs
 _write-ds.cjs
+scripts/tmp_*.js
+scripts/debug_*.js
+scripts/extract_block.js
+scripts/check_*.js
+
+# Archivo viejo (backups descartados)
+_archivo_viejo/
 
 # Misc generated
 nul
 stitch_*/
+
+# Temporales
+*.tmp
+*.bak
+*.log

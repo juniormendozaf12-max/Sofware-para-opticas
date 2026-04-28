@@ -1,20 +1,65 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Centro Optico Sicuani - Sistema POS v7.0
 
-# Run and deploy your AI Studio app
+Sistema completo de gestion para opticas. Incluye aplicacion desktop (single-file HTML) y app web/movil (React + Capacitor).
 
-This contains everything you need to run your app locally.
+## Estructura del Proyecto
 
-View your app in AI Studio: https://ai.studio/apps/4d54fb96-f3df-44c5-8d3e-33b58a0090fe
+```
+optical-atelier/
+|-- CENTRO OPTICO SICUANI SOFWARE.html  # Desktop: archivo principal (58K lineas)
+|-- centro-optico-sicuani-app.html      # Desktop: version app standalone
+|-- src/                                # Web App: React + TypeScript
+|   |-- components/                     # Componentes React
+|   |-- lib/                            # Servicios, utilidades, Supabase
+|   |-- types.ts                        # Interfaces TypeScript
+|-- android/                            # Capacitor Android (APK)
+|-- .env.example                        # Template de credenciales
+```
 
-## Run Locally
+## Web App (React)
 
-**Prerequisites:**  Node.js
+**Stack**: React 19 + TypeScript 5.8 + Vite 6.2 + Tailwind CSS 4
 
+```bash
+npm install
+npm run dev       # Desarrollo local
+npm run build     # Build produccion
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### Build APK
+```bash
+npm run build
+npx cap sync android
+# En Android Studio o con gradlew:
+cd android && ./gradlew assembleDebug
+```
+
+## Modulos del Sistema
+
+| Modulo | Descripcion |
+|--------|-------------|
+| Ventas (POS) | Punto de venta con vista Normal y TPV, scanner QR |
+| Inventario | Productos, stock, codigos de barras |
+| Lunas Matrix | Inventario de lunas con grilla, precios por serie |
+| Consultorio | Consultas oftalmologicas, prescripciones, historial |
+| Pacientes | Base de datos de pacientes/clientes |
+| Dashboard | Estadisticas, ventas del dia, resumen |
+
+## Tecnologias
+
+- **Desktop**: HTML5, CSS3, JavaScript vanilla (single-file)
+- **Web App**: React 19, TypeScript, Tailwind CSS 4, Vite
+- **Mobile**: Capacitor 6 (Android APK)
+- **Base de datos**: Supabase (PostgreSQL)
+- **AI**: Google Gemini (transcripcion, analisis clinico)
+- **Auth**: Demo login + Firebase Auth (Google OAuth)
+
+## Supabase
+
+Las credenciales de Supabase estan en `.env` (no se suben a GitHub).
+Copiar `.env.example` como `.env` y llenar con tus datos.
+
+## GitHub
+
+- **Repositorio**: https://github.com/juniormendozaf12-max/Sofware-para-opticas
+- **Branch principal**: `main`
