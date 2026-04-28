@@ -4,16 +4,17 @@ import {
   Printer,
   FileText,
   Download,
-  Phone,
   ShoppingBag,
   AlertCircle,
   User,
   Package,
   Calendar,
+  X,
 } from 'lucide-react';
 import { useTPV } from './TPVContext';
 import { WhatsAppIcon } from '../ui/whatsapp-icon';
 import { cn, formatCurrency, formatDate } from '../../lib/utils';
+import { downloadSaleBundlePdf, cancelSale, fetchSales, fetchProducts } from '../../lib/services';
 
 // ══════════════════════════════════════════
 // COMPONENT
@@ -31,7 +32,6 @@ export default function TPVCompletionStep() {
     printTicket,
     printNote,
     printBundle,
-    downloadPdf,
     sendWhatsApp,
   } = useTPV();
 
@@ -181,10 +181,10 @@ export default function TPVCompletionStep() {
               Nota
             </button>
 
-            {/* PDF */}
+            {/* PDF — ticket + medidas */}
             <button
               type="button"
-              onClick={() => downloadPdf(lastSale, lastSalePatient)}
+              onClick={() => downloadSaleBundlePdf(lastSale, lastSalePatient, lastSaleRx)}
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -265,9 +265,28 @@ export default function TPVCompletionStep() {
                     </span>
                   </div>
                 </div>
-                <span className="font-bold text-sm text-gray-900 flex-shrink-0">
-                  {formatCurrency(sale.total)}
-                </span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="font-bold text-sm text-gray-900">
+                    {formatCurrency(sale.total)}
+                  </span>
+                  {sale.status !== 'cancelled' && (
+                    <button
+                      type="button"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (!confirm('¿Cancelar esta venta? Se restaurará el stock.')) return;
+                        try {
+                          await cancelSale(sale.id);
+                          resetSale();
+                        } catch (err) { console.error('Error cancelling sale:', err); }
+                      }}
+                      className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      title="Cancelar venta"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -26,6 +26,9 @@ interface TPVContextValue {
   setCurrentStep: (step: TPVStep) => void;
   goNextStep: () => void;
 
+  // New client
+  handleCreateNewClient: () => Promise<void>;
+
   // Products
   allProducts: Product[];
   productsLoading: boolean;
@@ -437,6 +440,37 @@ export function TPVProvider({ user, children }: { user: UserProfile; children: R
   }, []);
 
   // ══════════════════════════════════════════
+  // CREATE NEW CLIENT (inline)
+  // ══════════════════════════════════════════
+
+  const handleCreateNewClient = useCallback(async () => {
+    const name = patientSearchTerm.trim() || patientName.trim();
+    if (!name) return;
+    try {
+      const newId = await createPatient({
+        name: name.toUpperCase(),
+        dni: '',
+        phone: patientPhone.trim() || undefined,
+        isVIP: false,
+      });
+      const newPatient: Patient = {
+        id: newId,
+        name: name.toUpperCase(),
+        dni: '',
+        isVIP: false,
+        phone: patientPhone.trim() || undefined,
+      };
+      setSelectedPatient(newPatient);
+      setPatientName(name.toUpperCase());
+      setPatientSearchTerm('');
+      setShowPatientResults(false);
+      refreshPatients();
+    } catch (err) {
+      console.error('Error creating new client:', err);
+    }
+  }, [patientSearchTerm, patientName, patientPhone, refreshPatients]);
+
+  // ══════════════════════════════════════════
   // SAVE PRESCRIPTION
   // ══════════════════════════════════════════
 
@@ -659,7 +693,7 @@ export function TPVProvider({ user, children }: { user: UserProfile; children: R
   // ══════════════════════════════════════════
 
   const value = useMemo<TPVContextValue>(() => ({
-    currentStep, setCurrentStep, goNextStep,
+    currentStep, setCurrentStep, goNextStep, handleCreateNewClient,
     allProducts, productsLoading, searchTerm, setSearchTerm, searchResults, categoryFilter, setCategoryFilter, filteredProducts,
     cart, addToCart, addLensToCart, updateQuantity, removeFromCart, clearCart, lastAddedProduct,
     discount, setDiscount, abono, setAbono, subtotal, discountAmount, total, saldo, estadoPago,
@@ -678,7 +712,7 @@ export function TPVProvider({ user, children }: { user: UserProfile; children: R
     printTicket, printNote, printBundle, downloadPdf, sendWhatsApp,
     user, fv,
   }), [
-    currentStep, goNextStep,
+    currentStep, goNextStep, handleCreateNewClient,
     allProducts, productsLoading, searchTerm, searchResults, categoryFilter, filteredProducts,
     cart, addToCart, addLensToCart, updateQuantity, removeFromCart, clearCart, lastAddedProduct,
     discount, abono, subtotal, discountAmount, total, saldo, estadoPago,

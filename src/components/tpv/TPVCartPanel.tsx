@@ -13,14 +13,13 @@ export default function TPVCartPanel() {
     subtotal,
     discount,
     setDiscount,
-    discountAmount,
     total,
     setCurrentStep,
     resetSale,
     setShowLensModal,
-    selectedPatient,
     patientRxHistory,
     loadingRx,
+    handleCreateNewClient,
   } = useTPV();
 
   const itemCount = cart.length;
@@ -49,6 +48,7 @@ export default function TPVCartPanel() {
         {/* Action buttons */}
         <div className="flex items-center gap-2">
           <button
+            onClick={handleCreateNewClient}
             className={cn(
               'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2',
               'bg-emerald-500 text-xs font-semibold text-white',

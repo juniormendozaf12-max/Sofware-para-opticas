@@ -25,17 +25,17 @@ export default function Sales({ user }: SalesProps) {
 
   return (
     <div className="flex flex-col h-[calc(100vh-56px)]">
-      {/* Toggle header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shrink-0 lg:px-6">
-        <h1 className="font-bold text-gray-900 text-lg tracking-tight">Ventas</h1>
-        <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+      {/* Toggle header — Duolingo style */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white border-b-2 border-[#e5e5e5] shrink-0 lg:px-6">
+        <h1 className="font-extrabold text-[#4b4b4b] text-lg tracking-tight">Ventas</h1>
+        <div className="flex bg-[#e5e5e5] rounded-2xl p-1 gap-0.5">
           <button
             onClick={() => toggleView('normal')}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+              'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all',
               view === 'normal'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700',
+                ? 'bg-white text-[#4b4b4b] shadow-sm border-b-2 border-[#cdcdcd]'
+                : 'text-[#afafaf] hover:text-[#777]',
             )}
           >
             <ShoppingCart className="w-3.5 h-3.5" />
@@ -44,10 +44,10 @@ export default function Sales({ user }: SalesProps) {
           <button
             onClick={() => toggleView('tpv')}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+              'flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all',
               view === 'tpv'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700',
+                ? 'bg-white text-[#4b4b4b] shadow-sm border-b-2 border-[#cdcdcd]'
+                : 'text-[#afafaf] hover:text-[#777]',
             )}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -61,8 +61,8 @@ export default function Sales({ user }: SalesProps) {
         <TPVLayout user={user} />
       ) : (
         <Suspense fallback={
-          <div className="flex-1 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+          <div className="flex-1 flex items-center justify-center bg-[#f0f0f0]">
+            <Loader2 className="w-8 h-8 text-[#58CC02] animate-spin" />
           </div>
         }>
           <SalesClassic user={user} />

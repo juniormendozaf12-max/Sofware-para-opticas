@@ -3150,6 +3150,31 @@ export function downloadNotePdf(sale: Sale, patient?: Patient | null, rx?: Presc
   }
 }
 
+/** Download ticket + RX bundle as PDFs.
+ *  On Capacitor: shares a combined PNG (ticket+RX image).
+ *  On Web: downloads ticket PDF, then RX PDF (if patient+rx available). */
+export async function downloadSaleBundlePdf(sale: Sale, patient?: Patient | null, rx?: Prescription | null) {
+  try {
+    if (_isCapacitor()) {
+      // On mobile, share the combined bundle image
+      const imgFile = _generateBundleImage(sale, patient, rx);
+      await _capacitorShareFile(imgFile, 'Ticket + Medidas');
+      return;
+    }
+    // Web: download ticket PDF
+    const ticketFile = generateTicketPdf(sale, patient);
+    _downloadFile(ticketFile);
+    // Then download RX PDF if available
+    if (patient && rx) {
+      await new Promise(r => setTimeout(r, 600));
+      const rxFile = generateRxPdf(patient, rx);
+      _downloadFile(rxFile);
+    }
+  } catch (err) {
+    console.error('[Download Sale Bundle PDF] Error:', err);
+  }
+}
+
 // ══════════════════════════════════════════
 // LENS PRICING ENGINE (matches desktop PRECIOS_POR_SERIE + PRECIOS_LUNAS)
 // ══════════════════════════════════════════
