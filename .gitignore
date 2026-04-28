@@ -13,3 +13,38 @@ desktop.ini
 *.tmp
 *.bak
 *.log
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+
+# Large media files
+*.mp4
+*.apk
+*.docx
+*.ipynb
+
+# PDFs (exclude from root only)
+/*.pdf
+
+# Root images
+/*.jpeg
+/*.png
+
+# Claude internal
+.claude/
+
+# Analysis scripts
+_analyze*.cjs
+_build-standalone.cjs
+_write-ds.cjs
+
+# Misc generated
+nul
+stitch_*/

@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Optometrist profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "optometrist"] },
+        "photoURL": { "type": "string", "format": "uri" }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Patient": {
+      "title": "Patient",
+      "description": "Patient record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "dni": { "type": "string" },
+        "isVIP": { "type": "boolean" },
+        "lastVisit": { "type": "string", "format": "date-time" },
+        "photoURL": { "type": "string", "format": "uri" }
+      },
+      "required": ["name", "dni"]
+    },
+    "Consultation": {
+      "title": "Consultation",
+      "description": "Clinical record of a patient visit.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" },
+        "medicalHistory": { "type": "string" },
+        "diagnosis": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      },
+      "required": ["patientId", "date", "reason"]
+    },
+    "Prescription": {
+      "title": "Prescription (RX)",
+      "description": "Lens prescription data.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "od": {
+          "type": "object",
+          "properties": {
+            "sph": { "type": "number" },
+            "cyl": { "type": "number" },
+            "axis": { "type": "number" },
+            "add": { "type": "number" }
+          }
+        },
+        "oi": {
+          "type": "object",
+          "properties": {
+            "sph": { "type": "number" },
+            "cyl": { "type": "number" },
+            "axis": { "type": "number" },
+            "add": { "type": "number" }
+          }
+        },
+        "dip": { "type": "number" }
+      },
+      "required": ["patientId", "date", "od", "oi"]
+    },
+    "InventoryItem": {
+      "title": "Inventory Item",
+      "description": "Lens stock item.",
+      "type": "object",
+      "properties": {
+        "material": { "type": "string" },
+        "sph": { "type": "number" },
+        "cyl": { "type": "number" },
+        "stock": { "type": "integer" }
+      },
+      "required": ["material", "sph", "cyl", "stock"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "Optometrist profiles."
+    },
+    "/patients/{patientId}": {
+      "schema": "Patient",
+      "description": "Patient records."
+    },
+    "/patients/{patientId}/consultations/{consultationId}": {
+      "schema": "Consultation",
+      "description": "Clinical history for a patient."
+    },
+    "/patients/{patientId}/prescriptions/{prescriptionId}": {
+      "schema": "Prescription",
+      "description": "Prescription history for a patient."
+    },
+    "/inventory/{itemId}": {
+      "schema": "InventoryItem",
+      "description": "Lens stock matrix."
+    }
+  }
+}

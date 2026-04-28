@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12 Pasos para el Exito - Transforma tu Idea en un Negocio Rentable</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --coral: #FF6B35;
+            --coral-dark: #E85A2A;
+            --purple: #7C3AED;
+            --purple-dark: #6D28D9;
+            --blue-dark: #0F172A;
+            --blue-medium: #1E293B;
+            --green: #10B981;
+            --yellow: #FBBF24;
+            --orange: #F97316;
+            --pink: #EC4899;
+            --white: #FFFFFF;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-500: #64748B;
+            --gray-700: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--blue-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.08) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: linear-gradient(90deg, var(--purple) 0%, var(--coral) 100%);
+            color: var(--white);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            animation: pulse-banner 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-banner {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .top-banner span {
+            background: var(--yellow);
+            color: var(--blue-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            color: var(--white);
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 100px;
+            background: linear-gradient(180deg, var(--gray-100) 0%, var(--white) 100%);
+            position: relative;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--purple);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            color: var(--blue-dark);
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--gray-700);
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
+        .hero-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-700);
+            background: var(--white);
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .hero-feature svg {
+            width: 20px;
+            height: 20px;
+            color: var(--green);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            color: var(--white);
+            padding: 18px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.35);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.45);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue-dark);
+            padding: 18px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        /* Book Preview */
+        .book-preview {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .book-mockup {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            background: linear-gradient(145deg, var(--purple) 0%, var(--coral) 100%);
+            border-radius: 8px 20px 20px 8px;
+            box-shadow:
+                -20px 20px 60px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            transform: perspective(1000px) rotateY(-15deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 30px;
+            color: var(--white);
+        }
+
+        .book-mockup:hover {
+            transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+        }
+
+        .book-mockup::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.2) 0%, transparent 100%);
+            border-radius: 8px 0 0 8px;
+        }
+
+        .book-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .book-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .book-chapter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .float-badge {
+            position: absolute;
+            background: var(--white);
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: float-up 3s ease-in-out infinite;
+        }
+
+        .float-badge.badge-1 {
+            top: 20px;
+            right: -20px;
+            color: var(--green);
+        }
+
+        .float-badge.badge-2 {
+            bottom: 80px;
+            left: -40px;
+            color: var(--purple);
+            animation-delay: 1s;
+        }
+
+        .float-badge.badge-3 {
+            bottom: 20px;
+            right: 20px;
+            color: var(--coral);
+            animation-delay: 2s;
+        }
+
+        @keyframes float-up {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Problem Section */
+        .problem-section {
+            padding: 100px 0;
+            background: var(--blue-dark);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--coral), var(--purple), var(--coral));
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--coral);
+            margin-bottom: 16px;
+        }
+
+        .problem-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .problem-section h2 span {
+            color: var(--coral);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .problem-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .problem-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .problem-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--white);
+        }
+
+        .problem-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .problem-card p {
+            font-size: 15px;
+            color: var(--gray-300);
+            line-height: 1.6;
+        }
+
+        /* Solution Section */
+        .solution-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--white) 0%, var(--gray-100) 100%);
+        }
+
+        .solution-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .solution-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .solution-section h2 .highlight {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--coral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .method-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px 32px;
+            text-align: center;
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .method-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(124, 58, 237, 0.15);
+        }
+
+        .method-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--coral) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .method-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 20px 0 16px;
+            color: var(--blue-dark);
+        }
+
+        .method-card p {
+            font-size: 15px;
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
+        .method-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .method-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--purple);
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 100px 0;
+            background: var(--white);
+        }
+
+        .content-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .content-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .chapter-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: var(--gray-100);
+            padding: 28px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .chapter-card:hover {
+            background: var(--white);
+            border-color: var(--coral);
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.1);
+        }
+
+        .chapter-number {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .chapter-content h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--blue-dark);
+        }
+
+        .chapter-content p {
+            font-size: 14px;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue-dark) 100%);
+            color: var(--white);
+        }
+
+        .benefits-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .benefits-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .benefit-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--yellow);
+        }
+
+        .benefit-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .benefit-card p {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            padding: 100px 0;
+            background: var(--gray-100);
+        }
+
+        .testimonials-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .testimonials-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 80px;
+            font-family: 'Playfair Display', serif;
+            color: var(--coral);
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-stars svg {
+            width: 18px;
+            height: 18px;
+            color: var(--yellow);
+            fill: var(--yellow);
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--gray-700);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .author-info h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--blue-dark);
+        }
+
+        .author-info span {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 100px 0;
+            background: var(--white);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .pricing-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--blue-dark) 0%, var(--purple) 100%);
+            border-radius: 32px;
+            padding: 50px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 50%);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--coral);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pricing-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pricing-subtitle {
+            font-size: 15px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .price-original {
+            font-size: 28px;
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .price-current {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .price-current span {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 15px;
+        }
+
+        .pricing-features li svg {
+            width: 22px;
+            height: 22px;
+            color: var(--green);
+        }
+
+        .btn-buy {
+            width: 100%;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            color: var(--white);
+            padding: 22px 40px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.5);
+        }
+
+        .pricing-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .pricing-guarantee svg {
+            width: 20px;
+            height: 20px;
+            color: var(--green);
+        }
+
+        /* Payment Methods */
+        .payment-section {
+            padding: 60px 0;
+            background: var(--gray-100);
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .payment-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .payment-method {
+            background: var(--white);
+            padding: 20px 32px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: var(--blue-dark);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .payment-method svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Referral Section */
+        .referral-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+            color: var(--white);
+        }
+
+        .referral-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .referral-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .referral-content p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
+        .referral-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .referral-benefit {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .referral-benefit svg {
+            width: 24px;
+            height: 24px;
+            color: var(--yellow);
+        }
+
+        .referral-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .referral-box h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .referral-link-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .referral-link-container input {
+            flex: 1;
+            border: none;
+            font-size: 14px;
+            color: var(--blue-dark);
+            background: transparent;
+            outline: none;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--blue-dark) 100%);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-copy:hover {
+            transform: scale(1.05);
+        }
+
+        .referral-commission {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .referral-commission span {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 100px 0;
+            background: var(--white);
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .faq-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 800;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--gray-200);
+            padding: 24px 0;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--blue-dark);
+        }
+
+        .faq-question svg {
+            width: 24px;
+            height: 24px;
+            color: var(--purple);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-answer p {
+            padding-top: 16px;
+            font-size: 15px;
+            color: var(--gray-500);
+            line-height: 1.7;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--gray-100) 0%, var(--white) 100%);
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .final-cta p {
+            font-size: 18px;
+            color: var(--gray-500);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .final-cta .btn-primary {
+            font-size: 18px;
+            padding: 22px 50px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--blue-dark);
+            color: var(--white);
+            padding: 60px 0 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand .logo {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.7;
+        }
+
+        .footer-links h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: var(--coral);
+        }
+
+        .footer-links a {
+            display: block;
+            color: var(--white);
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .book-preview {
+                margin-top: 40px;
+            }
+
+            .problem-grid,
+            .method-grid,
+            .benefits-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 50px 0 70px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .book-mockup {
+                width: 260px;
+                height: 340px;
+                transform: none;
+            }
+
+            .problem-section h2,
+            .solution-section h2,
+            .content-section h2,
+            .benefits-section h2,
+            .testimonials-section h2,
+            .pricing-section h2,
+            .referral-content h2,
+            .faq-header h2,
+            .final-cta h2 {
+                font-size: 32px;
+            }
+
+            .pricing-card {
+                padding: 30px;
+            }
+
+            .price-current {
+                font-size: 42px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        /* Animations on scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-number {
+            font-size: 36px;
+            font-weight: 800;
+            background: var(--white);
+            color: var(--coral);
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
+        Oferta especial por lanzamiento - 50% de descuento <span>Solo hoy</span>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">12 Pasos</div>
+            <a href="#comprar" class="nav-cta">Comprar Ahora</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">Capitulo 1 disponible ahora</div>
+                    <h1>Transforma tu idea en un <span class="highlight">negocio rentable</span> en 30 dias</h1>
+                    <p class="hero-subtitle">Guia practica con el sistema probado de Jack Ma para emprendedores hispanohablantes. Deja de improvisar y construye un negocio sistematico que genere ingresos consistentes.</p>
+                    <div class="hero-features">
+                        <div class="hero-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Hoja de ruta de 30 dias
+                        </div>
+                        <div class="hero-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Metodo 3C (Captar-Conectar-Convertir)
+                        </div>
+                        <div class="hero-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Plantillas descargables
+                        </div>
+                    </div>
+                    <div class="hero-buttons">
+                        <a href="#comprar" class="btn-primary">
+                            Obtener el libro
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#contenido" class="btn-secondary">
+                            Ver contenido
+                        </a>
+                    </div>
+                </div>
+                <div class="book-preview">
+                    <div class="floating-elements">
+                        <div class="float-badge badge-1">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            +500 vendidos
+                        </div>
+                        <div class="float-badge badge-2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            4.9 estrellas
+                        </div>
+                        <div class="float-badge badge-3">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                            Resultados rapidos
+                        </div>
+                    </div>
+                    <div class="book-mockup">
+                        <div class="book-title">12 Pasos para el Exito</div>
+                        <p class="book-subtitle">El Plan de Negocios Estrategico para emprendedores que quieren transformar su idea en un negocio consistente y rentable.</p>
+                        <div class="book-chapter">Capitulo 1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section">
+        <div class="container">
+            <span class="section-label">El problema</span>
+            <h2>Por que el <span>90% de emprendedores</span> fracasan?</h2>
+            <div class="problem-grid">
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <h3>Venden sin estrategia</h3>
+                    <p>Acciones tacticas aisladas sin seguimiento ni replica. Ingresos fluctuantes y dependencia de la suerte para conseguir clientes.</p>
+                </div>
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg>
+                    </div>
+                    <h3>No miden resultados</h3>
+                    <p>Dependen de corazonadas en lugar de metricas. Sin datos claros, no pueden saber que funciona y que mejorar.</p>
+                </div>
+                <div class="problem-card fade-in">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                    </div>
+                    <h3>Falta de sistema</h3>
+                    <p>La improvisacion puede funcionar por azar, pero solo la sistematizacion produce resultados repetibles y escalables.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution-section">
+        <div class="container">
+            <div class="solution-header">
+                <span class="section-label">La solucion</span>
+                <h2>El Metodo <span class="highlight">3C</span> que usamos</h2>
+                <p>Un sistema operativo aplicable a cualquier sector. Captar atencion, Conectar con tu audiencia, Convertir en ventas.</p>
+            </div>
+            <div class="method-grid">
+                <div class="method-card fade-in">
+                    <div class="method-number">1</div>
+                    <div class="method-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    </div>
+                    <h3>CAPTAR</h3>
+                    <p>Atraer atencion relevante con canales adecuados. Anuncios segmentados, SEO local y alianzas para generar trafico cualificado.</p>
+                </div>
+                <div class="method-card fade-in">
+                    <div class="method-number">2</div>
+                    <div class="method-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <h3>CONECTAR</h3>
+                    <p>Transformar atencion en deseo mediante contenido que resuene. Videos, casos de exito y emails secuenciados.</p>
+                </div>
+                <div class="method-card fade-in">
+                    <div class="method-number">3</div>
+                    <div class="method-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <h3>CONVERTIR</h3>
+                    <p>Facilitar la venta con pasos claros y garantias. Oferta clara, proceso de compra simple y seguimiento postventa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section" id="contenido">
+        <div class="container">
+            <div class="content-header">
+                <span class="section-label">Que aprenderas</span>
+                <h2>Contenido del Capitulo 1</h2>
+                <p>Cada seccion combina principios mentales de liderazgo con tacticas visuales y pasos accionables.</p>
+            </div>
+            <div class="chapters-grid">
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">1</div>
+                    <div class="chapter-content">
+                        <h4>La mentalidad de Jack Ma</h4>
+                        <p>Identifica tu talento y haz que te paguen por ello. De la intuicion al sistema.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">2</div>
+                    <div class="chapter-content">
+                        <h4>Error #1: Vender sin estrategia</h4>
+                        <p>Disenar un sistema simple: embudo de atencion, oferta clara y proceso de venta.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">3</div>
+                    <div class="chapter-content">
+                        <h4>La Propuesta de Valor</h4>
+                        <p>Vender transformaciones, no objetos. Define quien, que, por que y precio perceptual.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">4</div>
+                    <div class="chapter-content">
+                        <h4>El Metodo 3C completo</h4>
+                        <p>Marco operativo: Captar, Conectar y Convertir con micro-experimentos medibles.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">5</div>
+                    <div class="chapter-content">
+                        <h4>Teoria de la Frustracion</h4>
+                        <p>Donde hay frustracion hay demanda. Detecta, valida y escala oportunidades.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">6</div>
+                    <div class="chapter-content">
+                        <h4>Presencia Digital Estrategica</h4>
+                        <p>Google, redes sociales y WhatsApp como tu nuevo mostrador digital.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">7</div>
+                    <div class="chapter-content">
+                        <h4>Mentalidad de Dueno</h4>
+                        <p>Eliminar excusas, asumir responsabilidad y constancia disciplinada.</p>
+                    </div>
+                </div>
+                <div class="chapter-card fade-in">
+                    <div class="chapter-number">8</div>
+                    <div class="chapter-content">
+                        <h4>Hoja de Ruta de 30 dias</h4>
+                        <p>Plan accionable: Diagnostico, Activacion, Pruebas y Optimizacion paso a paso.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="container">
+            <div class="benefits-header">
+                <span class="section-label">Beneficios</span>
+                <h2>Que lograras con este libro</h2>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg>
+                    </div>
+                    <h4>Sistema Escalable</h4>
+                    <p>Deja de depender de clientes individuales con un sistema repetible</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <h4>Ingresos Consistentes</h4>
+                    <p>Genera flujo de ingresos predecible cada mes</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <h4>Resultados en 30 Dias</h4>
+                    <p>Plan accionable con pasos claros para empezar hoy</p>
+                </div>
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </div>
+                    <h4>Plantillas Listas</h4>
+                    <p>Diagramas, layouts y herramientas para ejecutar inmediatamente</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="testimonials-header">
+                <span class="section-label">Testimonios</span>
+                <h2>Lo que dicen nuestros lectores</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <p class="testimonial-text">"Por fin un libro que va al grano. En 2 semanas implemente el metodo 3C y consegui mis primeros 5 clientes de manera sistematica."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MC</div>
+                        <div class="author-info">
+                            <h5>Maria Castillo</h5>
+                            <span>Consultora de Marketing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <p class="testimonial-text">"La hoja de ruta de 30 dias fue clave. Paso de tener ingresos irregulares a facturar consistentemente cada mes. Totalmente recomendado."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JR</div>
+                        <div class="author-info">
+                            <h5>Juan Rodriguez</h5>
+                            <span>Emprendedor Digital</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <p class="testimonial-text">"La propuesta de valor me cambio la perspectiva. Ahora vendo transformaciones, no servicios. Mis clientes pagan mas y estan mas satisfechos."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AL</div>
+                        <div class="author-info">
+                            <h5>Andrea Lopez</h5>
+                            <span>Coach de Negocios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="comprar">
+        <div class="container">
+            <div class="pricing-header">
+                <span class="section-label">Inversion</span>
+                <h2>Accede al libro ahora</h2>
+                <p>Un solo pago, acceso de por vida a todas las actualizaciones</p>
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">23</div>
+                    <div class="countdown-label">Horas</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">59</div>
+                    <div class="countdown-label">Minutos</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">59</div>
+                    <div class="countdown-label">Segundos</div>
+                </div>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-badge">-50% Descuento</div>
+                <div class="pricing-title">12 Pasos para el Exito - Capitulo 1</div>
+                <p class="pricing-subtitle">El Plan de Negocios Estrategico</p>
+                <div class="pricing-price">
+                    <span class="price-original">$49</span>
+                    <span class="price-current"><span>$</span>24.50</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Libro digital completo (Capitulo 1)
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Hoja de Ruta de 30 dias descargable
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Plantillas y diagramas editables
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Acceso a actualizaciones gratuitas
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Acceso anticipado a capitulos futuros
+                    </li>
+                </ul>
+                <button class="btn-buy" onclick="procesarCompra()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    Comprar Ahora - $24.50
+                </button>
+                <div class="pricing-guarantee">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Garantia de satisfaccion de 30 dias
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Methods -->
+    <section class="payment-section">
+        <div class="container">
+            <div class="payment-header">
+                <h3>Metodos de pago seguros</h3>
+                <p>Aceeptamos multiples formas de pago</p>
+            </div>
+            <div class="payment-methods">
+                <div class="payment-method">
+                    <svg viewBox="0 0 24 24" fill="#1A1F71"><path d="M9.5 4.5L4.5 19.5h3l.9-2.7h5.2l.9 2.7h3L12.5 4.5h-3zm1.5 9.3l1.5-4.5 1.5 4.5h-3z"/></svg>
+                    Visa
+                </div>
+                <div class="payment-method">
+                    <svg viewBox="0 0 24 24" fill="#EB001B"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5" fill="#F79E1B"/></svg>
+                    Mastercard
+                </div>
+                <div class="payment-method">
+                    <svg viewBox="0 0 24 24" fill="#003087"><rect x="4" y="8" width="16" height="8" rx="1"/></svg>
+                    PayPal
+                </div>
+                <div class="payment-method">
+                    <svg viewBox="0 0 24 24" fill="#00A4EF"><path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z"/></svg>
+                    Pago Seguro
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Referral Section -->
+    <section class="referral-section" id="referidos">
+        <div class="container">
+            <div class="referral-grid">
+                <div class="referral-content">
+                    <span class="section-label" style="color: var(--yellow);">Programa de Referidos</span>
+                    <h2>Gana dinero recomendando el libro</h2>
+                    <p>Comparte tu enlace unico con amigos y colegas. Por cada venta que generes a traves de tu enlace, recibiras una comision directa a tu cuenta.</p>
+                    <div class="referral-benefits">
+                        <div class="referral-benefit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            30% de comision por cada venta
+                        </div>
+                        <div class="referral-benefit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Pagos semanales via PayPal o transferencia
+                        </div>
+                        <div class="referral-benefit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Panel de control para ver tus estadisticas
+                        </div>
+                        <div class="referral-benefit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Sin limite de ganancias
+                        </div>
+                    </div>
+                </div>
+                <div class="referral-box">
+                    <h3>Tu enlace de referido</h3>
+                    <div class="referral-link-container">
+                        <input type="text" id="referral-link" value="https://12pasos.com/ref/TU-CODIGO" readonly>
+                        <button class="btn-copy" onclick="copiarEnlace()">Copiar</button>
+                    </div>
+                    <div class="referral-commission">
+                        $7.35 <span>por venta</span>
+                    </div>
+                    <p style="font-size: 14px; opacity: 0.9;">Registrate como afiliado para obtener tu enlace personalizado</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-header">
+                <span class="section-label">FAQ</span>
+                <h2>Preguntas frecuentes</h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item active">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        En que formato recibo el libro?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Recibiras el libro en formato PDF de alta calidad, optimizado para leer en cualquier dispositivo. Tambien incluye las plantillas en formato editable.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Tiene garantia de devolucion?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Si, ofrecemos garantia de satisfaccion de 30 dias. Si el contenido no cumple tus expectativas, te devolvemos el 100% de tu dinero sin preguntas.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Como funciona el programa de referidos?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Al comprar el libro, recibiras automaticamente tu enlace de afiliado. Comparte ese enlace y gana el 30% de comision por cada venta generada.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Este libro es solo para emprendedores?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>El contenido esta disenado para emprendedores y pequenas empresas, pero los principios de estrategia, propuesta de valor y sistematizacion aplican a cualquier profesional que quiera mejorar sus resultados.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Cuando recibo los proximos capitulos?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Los compradores del Capitulo 1 recibiran acceso anticipado y precio especial para los siguientes capitulos. Te notificaremos por email cuando esten disponibles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>Empieza hoy tu transformacion</h2>
+            <p>No esperes mas. Cada dia que pasa sin un sistema es un dia de ingresos perdidos. Toma accion ahora.</p>
+            <a href="#comprar" class="btn-primary">
+                Obtener el libro ahora
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">12 Pasos</div>
+                    <p>Guia practica para emprendedores hispanohablantes que desean transformar una idea en un negocio consistente y rentable.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Producto</h4>
+                    <a href="#contenido">Contenido</a>
+                    <a href="#comprar">Comprar</a>
+                    <a href="#referidos">Referidos</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Soporte</h4>
+                    <a href="#">Centro de ayuda</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">FAQ</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="#">Terminos de uso</a>
+                    <a href="#">Politica de privacidad</a>
+                    <a href="#">Reembolsos</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 12 Pasos para el Exito. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const endOfDay = new Date();
+            endOfDay.setHours(23, 59, 59, 999);
+
+            const diff = endOfDay - now;
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const wasActive = item.classList.contains('active');
+
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+
+            // Open clicked if it wasn't active
+            if (!wasActive) {
+                item.classList.add('active');
+            }
+        }
+
+        // Copy referral link
+        function copiarEnlace() {
+            const input = document.getElementById('referral-link');
+            input.select();
+            document.execCommand('copy');
+
+            const btn = document.querySelector('.btn-copy');
+            btn.textContent = 'Copiado!';
+            setTimeout(() => {
+                btn.textContent = 'Copiar';
+            }, 2000);
+        }
+
+        // Process purchase
+        function procesarCompra() {
+            // Aqui puedes integrar tu pasarela de pago preferida
+            // Por ejemplo: Stripe, PayPal, MercadoPago, etc.
+            alert('Redirigiendo a la pasarela de pago seguro...\n\nAqui puedes integrar:\n- Stripe\n- PayPal\n- MercadoPago\n- Otro procesador de pagos');
+
+            // Ejemplo de redireccion a PayPal:
+            // window.location.href = 'https://paypal.me/tuusuario/24.50';
+
+            // Ejemplo de link de Stripe:
+            // window.location.href = 'https://buy.stripe.com/tu-link-de-pago';
+        }
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

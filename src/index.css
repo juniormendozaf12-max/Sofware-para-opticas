@@ -1,0 +1,607 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════
+   CENTRO OPTICO — Design System v2.0
+   Estetica editorial: blanco puro, jerarquia tipografica,
+   bordes suaves, micro-interacciones sutiles
+   ══════════════════════════════════════════════════ */
+
+/* ── Tailwind v4 Theme Tokens ── */
+@theme {
+  /* ── Brand ── */
+  --color-primary: #222222;
+  --color-primary-dark: #000000;
+  --color-accent: #FF385C;
+  --color-accent-light: #FFF0F3;
+  --color-accent-hover: #E31C5F;
+  --color-accent-dark: #C13584;
+  --color-on-primary: #ffffff;
+  --color-on-accent: #ffffff;
+
+  /* ── Semantic ── */
+  --color-success: #008A05;
+  --color-success-container: #E6F7E6;
+  --color-warning: #E0A800;
+  --color-warning-container: #FFF8E1;
+  --color-error: #C13515;
+  --color-error-container: #FFF0ED;
+  --color-on-error: #ffffff;
+  --color-info: #428BFF;
+  --color-info-container: #EBF3FF;
+
+  /* ── Compat aliases (used by components) ── */
+  --color-primary-container: #F7F7F7;
+  --color-on-primary-container: #222222;
+  --color-secondary: #428BFF;
+  --color-secondary-container: #EBF3FF;
+  --color-on-secondary: #ffffff;
+  --color-tertiary: #008A05;
+  --color-tertiary-container: #E6F7E6;
+  --color-on-tertiary: #ffffff;
+
+  /* ── Optica specific ── */
+  --color-lens-blue: #428BFF;
+  --color-lens-blue-bg: #EBF3FF;
+  --color-exam-green: #008A05;
+  --color-exam-green-bg: #E6F7E6;
+  --color-rx-orange: #E0A800;
+  --color-rx-orange-bg: #FFF8E1;
+
+  /* ── Surface Hierarchy ── */
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #FFF8F0;
+  --color-surface-bright: #ffffff;
+  --color-surface-container: #F7F7F7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #F7F7F7;
+  --color-surface-container-high: #EBEBEB;
+  --color-surface-variant: #F7F7F7;
+  --color-surface-tint: rgba(0, 0, 0, 0.02);
+
+  /* ── On Surface ── */
+  --color-on-surface: #222222;
+  --color-on-surface-variant: #717171;
+  --color-on-background: #222222;
+  --color-muted: #B0B0B0;
+
+  /* ── Outline / Dividers ── */
+  --color-outline: #B0B0B0;
+  --color-outline-variant: rgba(0, 0, 0, 0.08);
+  --color-divider: #EBEBEB;
+
+  /* ── Fonts ── */
+  --font-headline: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-label: 'Inter', system-ui, sans-serif;
+
+  /* ── Spacing (4px base) ── */
+  --spacing-0_5: 2px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 32px;
+  --spacing-8: 48px;
+
+  /* ── Shadows (neutral, not colored) ── */
+  --shadow-ambient: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-ambient-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-ambient-lg: 0 8px 28px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 24px rgba(255, 56, 92, 0.15);
+}
+
+/* ── Base Styles ── */
+html {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+/* ── Scrollbar Hide Utility ── */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Ghost Border ── */
+.ghost-border {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ── Glass Effect ── */
+.glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Primary Button (Dark) ── */
+.gradient-primary {
+  background: #222222;
+}
+.gradient-primary:hover {
+  background: #000000;
+}
+
+/* ── Accent Gradient Button ── */
+.gradient-accent {
+  background: linear-gradient(to right, #E61E4D, #E31C5F, #D70466);
+}
+.gradient-accent:hover {
+  background: linear-gradient(to right, #C13584, #E31C5F, #E61E4D);
+}
+
+/* ── Focus ring ── */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.2);
+}
+
+/* ── Print Styles ── */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
+
+/* ═══════════════════════════════════════
+   STAR BUTTON ANIMATION
+   ═══════════════════════════════════════ */
+
+@keyframes star-btn {
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+.animate-star-btn {
+  animation: star-btn calc(var(--duration, 3) * 1s) linear infinite;
+}
+
+/* ═══════════════════════════════════════
+   ANIMATIONS — Keyframes
+   ═══════════════════════════════════════ */
+
+/* Fade */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Slide */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slide-up-subtle {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slide-down {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100%); opacity: 0; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Scale */
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Shimmer (skeleton loading) */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+/* Pulse */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Heart beat (favorite toggle) */
+@keyframes heart-beat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Splash logo */
+@keyframes splash-logo {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Stagger child (card entrances) */
+@keyframes stagger-child {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════
+   ANIMATION UTILITY CLASSES
+   ═══════════════════════════════════════ */
+
+.animate-fade-in {
+  animation: fade-in 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+.animate-slide-up {
+  animation: slide-up-subtle 0.35s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+.animate-scale-in {
+  animation: scale-in 0.25s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #F7F7F7 25%, #EBEBEB 50%, #F7F7F7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.animate-heart-beat {
+  animation: heart-beat 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.animate-splash-logo {
+  animation: splash-logo 0.8s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* Stagger children: add delay via style="animation-delay: calc(var(--i) * 60ms)" */
+.animate-stagger-child {
+  animation: stagger-child 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════
+   TRANSITION UTILITIES
+   ═══════════════════════════════════════ */
+
+.transition-default {
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.transition-fast {
+  transition: all 0.15s ease;
+}
+.transition-color {
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+/* ═══════════════════════════════════════
+   INTERACTIVE STATES — Premium
+   ═══════════════════════════════════════ */
+
+/* Button press effect */
+.press-scale {
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+}
+.press-scale:active {
+  transform: scale(0.96);
+}
+
+/* Premium button — Airbnb-style subtle lift + glow */
+.btn-premium {
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
+              background-color 0.2s ease;
+}
+.btn-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+.btn-premium:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Chip/pill with spring bounce on select */
+.chip-premium {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.2s ease,
+              background-color 0.2s ease,
+              color 0.2s ease,
+              border-color 0.2s ease;
+}
+.chip-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.chip-premium:active {
+  transform: scale(0.95);
+}
+
+/* Card hover — premium lift (only on hover devices) */
+@media (hover: hover) {
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+                box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  .card-interactive {
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1),
+                box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1),
+                border-color 0.2s ease;
+  }
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* CTA button — Duolingo-style bouncy with bottom shadow */
+.btn-cta {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1),
+              filter 0.2s ease;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15),
+              0 6px 20px rgba(255, 56, 92, 0.25);
+}
+.btn-cta:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 7px 0 rgba(0, 0, 0, 0.12),
+              0 12px 32px rgba(255, 56, 92, 0.35);
+  filter: brightness(1.05);
+}
+.btn-cta:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15),
+              0 2px 8px rgba(255, 56, 92, 0.2);
+}
+
+/* Magnetic lift — smooth rise on hover, gentle return */
+@media (hover: hover) {
+  .btn-magnetic {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .btn-magnetic:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12),
+                0 0 0 3px rgba(0, 0, 0, 0.03);
+  }
+  .btn-magnetic:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition-duration: 0.1s;
+  }
+}
+
+/* ═══════════════════════════════════════
+   PATTERN UTILITIES
+   ═══════════════════════════════════════ */
+
+/* Skeleton loader */
+.skeleton {
+  border-radius: 12px;
+  background: linear-gradient(90deg, #F7F7F7 25%, #EBEBEB 50%, #F7F7F7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Horizontal scroll section */
+.scroll-snap-x {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 12px;
+  padding: 0 24px;
+}
+.scroll-snap-x::-webkit-scrollbar {
+  display: none;
+}
+.scroll-snap-x > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Sticky header with glass */
+.sticky-glass {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: box-shadow 0.2s ease;
+}
+.sticky-glass.scrolled {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Search bar style */
+.search-bar {
+  background: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  border-radius: 9999px;
+  padding: 14px 24px;
+  font-size: 14px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.2s ease;
+}
+.search-bar:focus {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.16);
+  border-color: transparent;
+}
+
+/* Bottom sheet overlay */
+.overlay-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  animation: fade-in 0.3s ease;
+}
+
+/* Toast notification */
+.toast {
+  background: #222222;
+  color: #FFFFFF;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+  animation: slide-up-subtle 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+.badge-accent {
+  background: #FF385C;
+  color: #FFFFFF;
+}
+.badge-success {
+  background: #E6F7E6;
+  color: #008A05;
+}
+.badge-warning {
+  background: #FFF8E1;
+  color: #E0A800;
+}
+.badge-error {
+  background: #FFF0ED;
+  color: #C13515;
+}
+.badge-neutral {
+  background: #F7F7F7;
+  color: #222222;
+}
+
+/* Chip / Pill filter */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #DDDDDD;
+  background: #FFFFFF;
+  color: #222222;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip:hover {
+  background: #F7F7F7;
+}
+.chip.selected {
+  background: #222222;
+  color: #FFFFFF;
+  border-color: #222222;
+}
+
+/* Notification dot */
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  background: #FF385C;
+  border-radius: 9999px;
+  border: 2px solid #FFFFFF;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE OPTIMIZATIONS
+   ═══════════════════════════════════════ */
+
+/* Touch optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover animations on touch devices */
+  .hover-lift:hover,
+  .card-interactive:hover,
+  .btn-magnetic:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Faster tap response */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Larger touch targets */
+  .chip, .badge {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Safe areas for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Android-specific input styling */
+input, textarea, select {
+  font-size: 16px; /* Prevents zoom on iOS/Android */
+}
+
+/* Ensure full viewport on mobile */
+html, body, #root {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Hardware acceleration for smoother scrolling */
+.scroll-smooth {
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}

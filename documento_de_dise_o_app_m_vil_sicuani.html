@@ -1,0 +1,56 @@
+# Documento de Especificaciones de Diseño: App Móvil Sicuani Vision
+
+## 1. Visión General
+La aplicación móvil de **Centro Óptico Sicuani** nace como una extensión natural del sistema de gestión para PC. Su objetivo principal es dotar al equipo de ventas y profesionales de la salud visual de una herramienta ágil, táctil y conectada en tiempo real para optimizar la atención en el mostrador y la gestión de inventario sin depender de una estación de trabajo fija.
+
+**Propuesta de Valor:** Agilidad operativa y precisión clínica en la palma de la mano.
+
+---
+
+## 2. Público Objetivo
+*   **Optometristas:** Necesitan registrar consultas y visualizar historiales clínicos de forma rápida entre paciente y paciente.
+*   **Vendedores de Mostrador:** Requieren consultar stock de lunas y monturas al instante y registrar ventas usando el dispositivo como escáner.
+*   **Administrador:** Necesita supervisar KPIs de ventas y asegurar que la sincronización cloud esté operativa.
+
+---
+
+## 3. Flujo de Usuario Principal
+1.  **Ingreso:** Autenticación rápida vinculada a las credenciales del sistema central.
+2.  **Consulta de Datos:** Búsqueda fuzzy de clientes o productos desde el Dashboard.
+3.  **Procesamiento de Venta:** Escaneo de producto -> Verificación de stock -> Confirmación.
+4.  **Atención Clínica:** Registro de motivo -> Graduación RX -> Diagnóstico -> Guardado en Nube.
+
+---
+
+## 4. Identidad Visual (Design System)
+
+### 4.1 Paleta de Colores
+Hemos seleccionado una paleta que transmite **profesionalismo médico** y **tecnología moderna**.
+*   **Violeta Primario (#7c3aed):** Representa la innovación y la identidad de marca.
+*   **Verde Éxito (#10b981):** Utilizado para confirmaciones de stock y estados de pago.
+*   **Azul Informativo (#3b82f6):** Para elementos de navegación y datos técnicos.
+*   **Slate/Gris Neutral:** Para tipografía y jerarquía visual secundaria.
+
+### 4.2 Tipografía
+*   **Manrope:** Elegida por su excelente legibilidad en pantallas pequeñas y su aspecto moderno y geométrico. 
+    *   *Headlines:* Bold / ExtraBold para máxima jerarquía.
+    *   *Body:* Medium para facilitar la lectura de datos numéricos (graduaciones).
+
+---
+
+## 5. Elementos de Interfaz Clave
+*   **Tarjetas de Datos:** Bordes redondeados (16px-24px) con sombras suaves para crear profundidad.
+*   **Grillas Numéricas:** Diseño de alta densidad pero con áreas de toque amplias para la entrada de datos RX.
+*   **Botones de Acción:** Gradientes sutiles para indicar interactividad y feedback háptico visual.
+*   **Bottom Navigation Bar:** Acceso con una sola mano a las 4 áreas críticas del negocio.
+
+---
+
+## 6. Directrices de Diseño Generales
+*   **Diseño para el Pulgar:** Los elementos interactivos principales deben ser fácilmente alcanzables con el pulgar.
+*   **Feedback Inmediato:** Cada escaneo o acción de guardado debe proporcionar una confirmación visual clara (Micro-interacciones).
+*   **Consistencia de Datos:** El formato de las graduaciones (ESF, CIL, EJE) debe imitar exactamente al sistema de PC para evitar errores de interpretación.
+*   **Offline-First:** La interfaz debe mostrar claramente si hay conexión con Supabase para garantizar la integridad de la información.
+
+---
+*Preparado por Stitch - Senior UI/UX Partner*

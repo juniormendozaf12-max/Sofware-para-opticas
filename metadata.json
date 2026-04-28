@@ -1,0 +1,8 @@
+{
+  "name": "Optical Atelier",
+  "description": "A professional management platform for optical clinics featuring patient records, real-time inventory lens matrix, and AI-powered clinical assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

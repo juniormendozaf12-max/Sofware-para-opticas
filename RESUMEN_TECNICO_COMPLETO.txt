@@ -1,0 +1,739 @@
+================================================================================
+  OPTICAL ATELIER — RESUMEN TECNICO COMPLETO PARA CONTINUACION CON IA
+  Generado: 2026-04-06
+================================================================================
+
+1. QUE ES OPTICAL ATELIER
+================================================================================
+
+Aplicacion web movil (React) para gestion de un centro optico (Centro Optico
+Sicuani). Se conecta a la MISMA base de datos Supabase que el software de
+escritorio existente (archivo HTML de 58,000 lineas). Ambos sistemas leen y
+escriben los mismos datos en tiempo real.
+
+Funcionalidades:
+- Dashboard con estadisticas del dia (ventas, pacientes, stock critico)
+- Gestion de ventas con carrito de compras
+- Gestion de pacientes (16,000+ registros)
+- Prescripciones oftalmologicas (RX)
+- Consultas clinicas con diagnostico
+- Inventario de productos y matriz de lunas
+- Impresion de recetas, tickets y notas de venta
+- Integracion con Google Gemini AI (pendiente API key)
+- Sincronizacion bidireccional en tiempo real con el software de escritorio
+
+
+2. STACK TECNOLOGICO
+================================================================================
+
+Frontend:       React 19 + TypeScript 5.8
+Bundler:        Vite 6.2
+Estilos:        Tailwind CSS 4 + Design System custom (tokens en index.css)
+Routing:        React Router 7.14
+Animaciones:    Motion (Framer Motion) 12.38
+Iconos:         Lucide React 0.546
+Base de datos:  Supabase (PostgreSQL) — tabla unica app_data
+Auth:           Demo login (primario) + Firebase Google OAuth (opcional)
+AI:             Google Gemini (@google/genai 1.48)
+Realtime:       WebSocket (postgres_changes) + Polling (5s)
+
+
+3. BASE DE DATOS — ARQUITECTURA CRITICA
+================================================================================
+
+Supabase URL: https://gcrdnnlbetuzrnfqllmn.supabase.co
+
+TABLA UNICA: app_data
+  - establecimiento  TEXT      (PK parte 1: 'dos_de_mayo' o 'plaza_de_armas')
+  - data_key         TEXT      (PK parte 2: 'clientes', 'ventas', etc.)
+  - data             JSONB     (array completo de registros)
+  - updated_at       TIMESTAMP (para polling de cambios)
+
+CLAVE PRIMARIA COMPUESTA: (establecimiento, data_key)
+
+Data keys y su contenido:
+  - clientes              → Array de 16,000+ pacientes
+  - productos             → Array de productos/inventario
+  - ventas                → Array de 1,568+ transacciones de venta
+  - medidas               → Array de prescripciones RX (nuevas)
+  - consultas_clinicas    → Array de consultas clinicas
+  - inventario_lunas      → Matriz de inventario de lunas
+  - migracion_historial_0 → Chunk 0 de datos migrados (100 pacientes)
+  - migracion_historial_1 → Chunk 1 ...
+  - ... hasta migracion_historial_163
+
+PATRON DE ESCRITURA:
+  Cada escritura hace UPSERT del array COMPLETO. No se modifican elementos
+  individuales. El array entero se reemplaza.
+
+PATRON DE LECTURA:
+  SELECT data, updated_at FROM app_data
+  WHERE establecimiento = 'dos_de_mayo' AND data_key = 'ventas'
+
+PATRON DE MERGE (Desktop):
+  El desktop usa _mergeArrayById(local, cloud, 'id') que:
+  1. Indexa registros locales por ID
+  2. Para cada registro cloud: si es nuevo lo agrega, si existe compara
+     fechaModificacion y gana el mas reciente
+  3. Resultado es UNION de ambos arrays
+
+
+4. ESTRUCTURA DE ARCHIVOS
+================================================================================
+
+optical-atelier/
+├── .env                              # Variables de entorno
+├── package.json                      # Dependencias (type: "module")
+├── vite.config.ts                    # Config Vite + Tailwind plugin
+├── tsconfig.json                     # TypeScript config
+├── index.html                        # Entry HTML
+├── CENTRO OPTICO SICUANI SOFWARE.html  # Software desktop (58K lineas)
+├── supabase-schema.sql               # Schema SQL referencia
+│
+├── src/
+│   ├── App.tsx                       # Auth (demo/Firebase) + React Router
+│   ├── types.ts                      # TODAS las interfaces TypeScript
+│   ├── index.css                     # Design tokens (@theme) + utilidades
+│   ├── main.tsx                      # Entry point React
+│   │
+│   ├── lib/
+│   │   ├── supabase.ts              # Cliente Supabase + ESTABLECIMIENTO
+│   │   ├── services.ts              # ★ ARCHIVO CENTRAL (1200+ lineas)
+│   │   ├── demoData.ts              # Fallback localStorage (modo demo)
+│   │   ├── gemini.ts                # Google Gemini AI integration
+│   │   └── utils.ts                 # cn(), formatCurrency(), formatDate()
+│   │
+│   └── components/
+│       ├── Layout.tsx               # Header + Bottom Navigation
+│       ├── Dashboard.tsx            # Estadisticas + Acciones rapidas
+│       ├── Sales.tsx                # Carrito + Busqueda + Pago
+│       ├── Patients.tsx             # Lista paginada + Crear paciente
+│       ├── PatientProfile.tsx       # Perfil: RX + Ventas + Consultas
+│       ├── Inventory.tsx            # Productos + Matriz de lunas
+│       └── NewConsultation.tsx      # Formulario consulta clinica
+
+
+5. SERVICES.TS — EL ARCHIVO CENTRAL (DETALLE COMPLETO)
+================================================================================
+
+Este archivo contiene TODA la logica de datos. Es el mas importante.
+
+--- MOTOR DE DATOS ---
+
+loadData<T>(key: string): Promise<T>
+  Lee datos de Supabase con cache en memoria.
+  Cache TTL: clientes=2min, ventas=30s, productos=1min, default=15s.
+  Tambien guarda updated_at en _lastUpdated para baseline del polling.
+
+saveData(key: string, items: any): Promise<void>
+  Escribe array completo a Supabase via UPSERT.
+  Actualiza cache local y _lastUpdated para evitar auto-notificacion.
+
+invalidateCache(key?: string): void
+  Limpia cache de un key o de todos.
+
+--- SISTEMA REALTIME (DUAL) ---
+
+onDataChange(key: string, cb: () => void): () => void
+  Suscribe un callback a cambios en un data_key.
+  Retorna funcion de desuscripcion.
+  Auto-inicia WebSocket + Polling en primera suscripcion.
+  Auto-para todo cuando no hay suscriptores.
+
+_startRealtime(): void [interno]
+  Crea canal WebSocket: supabase.channel('app_data_changes')
+  Escucha postgres_changes filtrado por establecimiento.
+  Al detectar cambio: actualiza _lastUpdated + llama _notifyKey().
+
+_startPolling(): void [interno]
+  setInterval cada 5 segundos.
+  Consulta updated_at de todas las keys suscritas.
+  Si changed vs _lastUpdated anterior: llama _notifyKey().
+  Primera ejecucion solo inicializa baseline (no notifica).
+
+_notifyKey(key: string): void [interno]
+  Invalida cache del key.
+  Llama todos los callbacks suscritos a ese key.
+
+--- GENERADOR DE IDs ---
+
+uid(prefix: string): string
+  Genera: PREFIJO_TIMESTAMP_3RANDOM
+  Ejemplo: VEN_1775454190502_462
+  Prefijos: CLI_, PROD_, VEN_, RX_, CONS_
+
+--- FUNCIONES DE FECHA (CRITICAS) ---
+
+_localizeDate(d: string): string
+  Convierte "2026-04-06" → "2026-04-06T00:00:00"
+  NECESARIO porque new Date("2026-04-06") parsea como UTC midnight,
+  que en Peru (UTC-5) es el dia ANTERIOR a las 7 PM.
+  Con "T00:00:00" JS lo parsea como hora LOCAL.
+
+_toLocalYMD(d: string): string
+  Convierte ISO "2026-04-06T15:30:00.000Z" → "2026-04-06" (fecha LOCAL)
+  Usa getFullYear/getMonth/getDate (todos locales).
+  El desktop REQUIERE este formato exacto en campos fecha/fechaEmision.
+
+--- MAPPERS VENTAS ---
+
+desktopToSale(v: any): Sale
+  Convierte formato desktop → formato app.
+  Mapeos clave:
+    v.fecha → date (via _localizeDate)
+    v.estadoPago → status (PAGADO=completed, PENDIENTE=pending, CANCELADO=cancelled)
+    v.totalPagar → total
+    v.clienteNombre → patientName
+    v.vendedor → sellerName
+    v.docTipo → documentType (BOLETA=boleta, FACTURA=factura, TICKET=nota)
+    v.items[].productoId → items[].productId
+    v.items[].importe → items[].subtotal
+
+saleToDesktop(s: Sale, existing?: any): any
+  Convierte formato app → formato desktop.
+  CAMPOS CRITICOS generados:
+    fecha: _toLocalYMD(s.date)           ← YYYY-MM-DD, NO ISO
+    fechaEmision: _toLocalYMD(s.date)    ← YYYY-MM-DD, NO ISO
+    fechaCreacion: new Date().toISOString()
+    fechaModificacion: new Date().toISOString()  ← REQUERIDO para merge
+    estadoPago: PAGADO|PENDIENTE|CANCELADO
+    estadoEntrega: 'ENTREGADO'
+    establecimiento: ESTABLECIMIENTO
+
+--- MAPPERS PACIENTES ---
+
+desktopToPatient(c: any): Patient
+  Maneja 2 formatos legacy:
+    Nuevo: c.nombre + c.apellidos
+    Migrado: c.nombres (campo unico)
+  DNI: c.dni || c.documento
+  VIP: c._totalVt >= 3 (3+ ventas)
+
+patientToDesktop(p: Patient, existing?: any): any
+  Preserva campos existentes con spread.
+  Genera nombre/apellidos separados.
+
+--- MAPPERS PRESCRIPCIONES ---
+
+desktopToPrescription(m: any): Prescription
+  Campos: lejosOdEsf → od.sph, lejosOdCil → od.cyl, etc.
+  DIP: lejosDip (valor completo) o dipOi (valor mitad × 2)
+
+prescriptionToDesktop(rx: Prescription): any
+  Inverso. Genera lejosDip (completo) y dipOi (mitad).
+
+--- MAPPERS CONSULTAS ---
+
+desktopToConsultation(c: any): Consultation
+  diagMiopia → diagnosis.myopia (boolean)
+  Genera diagnosisTags: array de strings legibles
+
+consultationToDesktop(c: Consultation): any
+  Inverso. Genera campos diagMiopia, diagAstigmatismo, etc.
+
+--- MIGRACION LEGACY ---
+
+loadMigrationHistory(patientId: string): Promise<{rx, vt} | null>
+  Calcula chunk: Math.floor(suffix / 100) donde suffix es el
+  numero despues del ultimo '_' en el ID del paciente.
+  Carga migracion_historial_N y extrae datos del paciente.
+  Retorna {rx: array de prescripciones, vt: array de ventas}.
+
+migratedRxToPrescription(rx, patientId, index): Prescription
+  Convierte formato viejo: odE→sph, odC→cyl, odJ→axis
+
+migratedVtToSale(vt, patientId, patientName, index): Sale
+  Convierte formato viejo: c→descripcion, t→total, a→pagado
+
+--- OPERACIONES CRUD ---
+
+Pacientes:
+  fetchPatients(): Promise<Patient[]>         # Todos activos, sorted by name
+  getPatient(id): Promise<Patient | null>     # Busqueda por ID
+  createPatient(data): Promise<string>        # Retorna ID
+  updatePatient(id, updates): Promise<void>   # Merge parcial
+  searchPatients(term, patients): Patient[]   # Filtro en memoria
+
+Productos:
+  fetchProducts(): Promise<Product[]>         # Todos, sorted by name
+  createProduct(data): Promise<string>        # Retorna ID
+  updateProduct(id, updates): Promise<void>   # Merge parcial
+  searchProducts(term, products): Product[]   # Filtro en memoria
+
+Ventas:
+  fetchSales(limit=50): Promise<Sale[]>           # Ultimas N, desc fecha
+  fetchTodaySales(): Promise<Sale[]>              # Hoy, no canceladas
+  fetchSalesForPatient(patientId): Promise<Sale[]> # Ventas + migradas
+  createSale(sale): Promise<string>               # Crea + descuenta stock
+  cancelSale(saleId): Promise<void>               # Cancela + restaura stock
+
+Prescripciones:
+  fetchPrescriptions(patientId): Promise<Prescription[]>  # Medidas + migradas
+  createPrescription(patientId, rx): Promise<string>
+
+Consultas:
+  fetchConsultations(patientId): Promise<Consultation[]>
+  createConsultation(patientId, data): Promise<string>
+
+Dashboard:
+  fetchDashboardStats(): Promise<DashboardStats>
+    Retorna: dailySales, dailySalesCount, criticalStock, totalPatients
+
+Inventario:
+  fetchLensInventory(): Promise<InventoryItem[]>  # Matriz lunas
+
+--- FUNCIONES DE IMPRESION ---
+
+printPrescription(patient, rx, optometrist?): void
+  Abre ventana popup 185mm × 260mm con receta RX.
+  Tabla OD/OI con Esf, Cil, Eje, Add, DIP.
+  Color segun establecimiento (morado/azul).
+
+printSaleTicket(sale, patient?): void
+  Formato 80mm para impresora termica.
+  Items, totales, metodo de pago, fecha.
+
+printSaleNote(sale, patient?, rx?): void
+  Formato A4 nota de venta.
+  Incluye seccion de prescripcion si se proporciona RX.
+
+
+6. INTERFACES TYPESCRIPT (types.ts)
+================================================================================
+
+--- USUARIO ---
+UserProfile {
+  uid: string
+  name: string
+  email: string
+  role: 'admin' | 'optometrist' | 'seller'
+  photoURL?: string
+  establecimiento?: string
+}
+
+--- PACIENTE ---
+Patient {
+  id: string              # CLI_timestamp_random
+  name: string            # nombre + apellidos combinados
+  dni: string             # Documento de identidad
+  phone?: string
+  address?: string
+  birthDate?: string
+  isVIP: boolean          # true si tiene 3+ ventas
+  lastVisit?: string
+  photoURL?: string
+  notes?: string
+  createdAt?: string
+}
+
+--- PRESCRIPCION ---
+EyeRx {
+  sph: number             # Esfera
+  cyl: number             # Cilindro
+  axis: number            # Eje (grados)
+  add: number             # Adicion (presbicia)
+}
+
+Prescription {
+  id: string              # RX_timestamp_random
+  patientId: string
+  date: string
+  od: EyeRx               # Ojo derecho
+  oi: EyeRx               # Ojo izquierdo
+  dip: number             # Distancia interpupilar
+  lensType?: string
+  material?: string
+  treatments?: string[]
+  optometrist?: string
+}
+
+--- CONSULTA ---
+Diagnosis {
+  myopia: boolean
+  hyperopia: boolean
+  astigmatism: boolean
+  presbyopia: boolean
+  amblyopia: boolean
+  other?: string
+}
+
+Consultation {
+  id: string              # CONS_timestamp_random
+  patientId: string
+  date: string
+  reason: string
+  medicalHistory?: string
+  visualAcuity?: { scOd, scOi, ccOd, ccOi }
+  diagnosis: Diagnosis
+  diagnosisTags: string[] # ["Miopia", "Astigmatismo", ...]
+  lensRecommendation?: { type, material, treatments[] }
+  pioOd?: number          # Presion intraocular OD
+  pioOi?: number
+  notes?: string
+  optometrist?: string
+  aiAnalysis?: string     # Resultado Gemini AI
+}
+
+--- PRODUCTO ---
+ProductCategory = 'frame' | 'lens' | 'contactLens' | 'accessory' | 'solution' | 'other'
+
+Product {
+  id: string              # PROD_timestamp_random
+  code: string            # Codigo de barras
+  name: string
+  brand?: string
+  model?: string
+  color?: string
+  category: ProductCategory
+  material?: string
+  costPrice: number
+  salePrice: number
+  stock: number
+  stockMin: number        # Umbral stock critico
+  supplier?: string
+  location?: string
+  status: 'active' | 'inactive'
+  createdAt?: string
+}
+
+--- VENTA ---
+PaymentMethod = 'cash' | 'card' | 'yape' | 'plin' | 'transfer'
+DocumentType = 'boleta' | 'factura' | 'nota'
+
+SaleItem {
+  productId: string
+  productName: string
+  productCode: string
+  quantity: number
+  unitPrice: number
+  discount: number
+  subtotal: number        # unitPrice * quantity - discount
+}
+
+Sale {
+  id: string              # VEN_timestamp_random
+  date: string            # "2026-04-06T00:00:00" (local)
+  patientId?: string
+  patientName?: string
+  items: SaleItem[]
+  subtotal: number
+  discount: number
+  igv: number             # Siempre 0 (no se usa IGV)
+  total: number
+  paymentMethod: PaymentMethod
+  documentType: DocumentType
+  documentNumber?: string
+  sellerId: string
+  sellerName: string
+  establecimiento?: string
+  status: 'completed' | 'cancelled' | 'pending'
+  notes?: string
+}
+
+--- DASHBOARD ---
+DashboardStats {
+  dailySales: number          # Monto total ventas hoy
+  dailySalesCount: number     # Cantidad ventas hoy
+  consultationsToday: number  # Consultas hoy
+  criticalStock: number       # Productos bajo stock minimo
+  totalPatients: number       # Total pacientes activos
+}
+
+--- INVENTARIO ---
+InventoryItem {
+  id: string
+  material: string
+  sph: number
+  cyl: number
+  stock: number
+}
+
+
+7. COMPONENTES — DETALLE FUNCIONAL
+================================================================================
+
+--- App.tsx ---
+Maneja autenticacion y routing.
+Estado: user (UserProfile | null)
+Auth demo: localStorage key 'oa_demo_user'
+Auth Firebase: lazy-loaded, Google popup
+Rutas: /, /sales, /inventory, /patients, /patients/:id, /new-consultation/:id
+
+--- Layout.tsx ---
+Header fijo: avatar usuario + titulo + boton SYNC + boton logout
+Bottom nav: 4 tabs (Inicio, Ventas, Inventario, Pacientes)
+Boton back en subpaginas
+Indicador modo demo/cloud
+
+--- Dashboard.tsx ---
+Suscripcion realtime: ventas, productos, clientes
+Cards: Ventas del dia (monto + count), Pacientes total, Stock critico
+Acciones rapidas: Nueva Venta, Nuevo Paciente, Ver Inventario
+Pacientes recientes: ultimos 5
+Refresh silencioso (sin spinner en updates realtime)
+
+--- Sales.tsx ---
+Suscripcion realtime: ventas, productos
+Busqueda de productos con dropdown
+Filtros por categoria (monturas, lunas, accesorios, etc.)
+Carrito: agregar/quitar/cantidad
+Selector metodo de pago (efectivo, tarjeta, yape, plin, transferencia)
+Selector tipo documento (boleta, factura, nota)
+Campo nombre paciente
+Boton confirmar venta → createSale() → descuenta stock
+Ventas recientes: ultimas 10
+
+--- Patients.tsx ---
+Suscripcion realtime: clientes
+Busqueda por nombre, DNI, telefono
+Paginacion: 60 pacientes por pagina
+Modo crear: formulario nombre, DNI, telefono, direccion, fecha nac, VIP
+Badge VIP en lista
+
+--- PatientProfile.tsx ---
+Suscripcion realtime: ventas, medidas
+Tabs: RX | Ventas | Consultas (con contadores)
+Header: avatar, nombre, DNI, telefono, direccion, fecha nac, VIP
+Ultima prescripcion destacada con tabla OD/OI
+Lista de prescripciones con boton imprimir cada una
+Lista de ventas expandible con items, totales, descuentos
+Botones imprimir: Ticket (80mm) + Nota de Venta (A4)
+Lista de consultas con diagnosticos y tags
+Flash verde "Actualizado" en cambios realtime
+
+--- Inventory.tsx ---
+Suscripcion realtime: productos
+Vista productos: filtro por categoria + busqueda
+Badges stock: OK (verde), Bajo (naranja), Critico (rojo)
+Vista matriz lunas: selector material, tabla SPH × CYL
+Boton actualizar manual
+
+--- NewConsultation.tsx ---
+Formulario completo para consulta clinica:
+  - Motivo de consulta
+  - Historial medico
+  - Agudeza visual (SC OD/OI, CC OD/OI)
+  - Presion intraocular (PIO OD/OI)
+  - Diagnostico checkboxes (miopia, hipermetropia, astigmatismo, etc.)
+  - Prescripcion: OD/OI (Esf, Cil, Eje, Add) + DIP
+  - Recomendacion de lentes (tipo, material, tratamientos)
+  - Boton guardar → createConsultation() + createPrescription()
+  - Boton imprimir RX
+  - Boton microfono (placeholder para transcripcion AI)
+  - Boton analisis AI (Gemini)
+
+
+8. SISTEMA REALTIME — FLUJO COMPLETO
+================================================================================
+
+ESCRITURA (ej: desktop crea una venta):
+  1. Desktop hace upsert a Supabase: ventas = [...array_completo]
+  2. Supabase actualiza updated_at del row
+
+DETECCION POR WEBSOCKET (instantaneo):
+  3. Canal postgres_changes envia payload con data_key='ventas'
+  4. _startRealtime() recibe el evento
+  5. Actualiza _lastUpdated['ventas'] con el timestamp del payload
+  6. Llama _notifyKey('ventas')
+
+DETECCION POR POLLING (fallback cada 5s):
+  3b. _startPolling() hace SELECT data_key, updated_at para keys suscritas
+  4b. Compara con _lastUpdated → si cambio, llama _notifyKey()
+
+_notifyKey('ventas'):
+  7. Borra _cache['ventas'] (fuerza recarga desde Supabase)
+  8. Borra _mappedPatients (invalida cache de pacientes mapeados)
+  9. Para cada callback suscrito a 'ventas': lo ejecuta
+
+COMPONENTE (ej: Dashboard):
+  10. refreshData() se ejecuta (callback silencioso, sin spinner)
+  11. Llama fetchDashboardStats() + fetchTodaySales()
+  12. Como el cache fue invalidado, hace query fresca a Supabase
+  13. Actualiza estado React → UI se actualiza
+
+PREVENCION DE LOOPS:
+  - saveData() actualiza _lastUpdated → polling no re-notifica
+  - Desktop _isRealtimeSelfEcho: ignora eventos dentro de 5s de su propia escritura
+  - loadData() guarda updated_at como baseline → primer poll no dispara falso
+
+
+9. DESIGN SYSTEM
+================================================================================
+
+Fuentes:
+  Headlines: Manrope (400-800)
+  Body/Labels: Inter (400-700)
+
+Colores principales:
+  Primary:   #7c3aed (morado)         → Botones, links, acentos
+  Secondary: #2563eb (azul)           → Cards secundarias
+  Tertiary:  #0d9488 (teal)           → Stock, acciones terciarias
+  Error:     #dc2626 (rojo)           → Errores, cancelaciones
+
+Superficies (sin bordes, jerarquia por color):
+  surface:                  #f9f9fc    → Fondo base
+  surface-container-lowest: #ffffff    → Cards principales
+  surface-container-low:    #f3f3f6    → Cards secundarias
+  surface-container:        #f1f1f5    → Contenedores
+  surface-container-high:   #eaeaef    → Bordes sutiles
+
+Clases utilitarias:
+  .gradient-primary   → Gradiente 135° morado oscuro a claro
+  .glass              → Fondo semi-transparente + blur
+  .ghost-border       → Borde sutil 1px gris 15% opacidad
+
+Sombras (tinted con morado):
+  shadow-ambient:     0px 12px 32px rgba(99, 14, 212, 0.08)
+  shadow-ambient-lg:  0px 20px 48px rgba(99, 14, 212, 0.12)
+  shadow-glow:        0px 0px 24px rgba(124, 58, 237, 0.2)
+
+Colores impresion por local:
+  dos_de_mayo:    #7c3aed (morado)
+  plaza_de_armas: #312e81 (azul marino)
+
+
+10. VARIABLES DE ENTORNO (.env)
+================================================================================
+
+VITE_SUPABASE_URL="https://gcrdnnlbetuzrnfqllmn.supabase.co"
+VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+VITE_ESTABLECIMIENTO="dos_de_mayo"
+GEMINI_API_KEY=""                    # Pendiente: necesita key para AI
+APP_URL=""                           # URL de deployment (opcional)
+
+
+11. RUTAS DE LA APLICACION
+================================================================================
+
+GET /                                → Dashboard (inicio)
+GET /sales                           → Ventas (carrito + historial)
+GET /inventory                       → Inventario (productos + lunas)
+GET /patients                        → Lista pacientes
+GET /patients/new                    → Crear paciente
+GET /patients/:id                    → Perfil paciente
+GET /new-consultation/:patientId     → Nueva consulta clinica
+GET *                                → Redirige a /
+
+
+12. BUGS CORREGIDOS EN ESTA SESION
+================================================================================
+
+BUG 1: Ventas web no aparecen en desktop
+  CAUSA: saleToDesktop() guardaba fecha como ISO completo
+         ("2026-04-06T15:30:00.000Z") pero el desktop filtra con
+         v.fechaEmision !== "2026-04-06" (comparacion exacta string).
+  FIX:   Nueva funcion _toLocalYMD() convierte ISO → "YYYY-MM-DD" local.
+         saleToDesktop() ahora genera fecha/fechaEmision en formato correcto.
+
+BUG 2: Desktop merge pierde ventas web
+  CAUSA: saleToDesktop() no incluia campo fechaModificacion.
+         Desktop _mergeArrayById() compara fechaModificacion para resolver
+         conflictos. Sin este campo, ventas web siempre perdian.
+  FIX:   saleToDesktop() ahora incluye fechaModificacion: new Date().toISOString()
+
+BUG 3: Fechas del desktop se muestran un dia atras en web
+  CAUSA: new Date("2026-04-06") parsea como UTC midnight.
+         En Peru (UTC-5), eso es 5 de abril 7:00 PM → dia anterior.
+  FIX:   Nueva funcion _localizeDate() convierte "2026-04-06" →
+         "2026-04-06T00:00:00" que JS parsea como hora LOCAL.
+         desktopToSale() ahora usa _localizeDate() para el campo date.
+
+BUG 4: Dashboard muestra "0 ventas del dia"
+  CAUSA: fetchDashboardStats() usaba new Date(v.fecha) directo sin
+         _localizeDate(). Mismo bug de timezone que Bug 3.
+  FIX:   Ahora usa _localizeDate(raw) antes de crear el Date.
+
+BUG 5: Sin sincronizacion realtime en la mayoria de paginas
+  CAUSA: Solo PatientProfile tenia suscripciones onDataChange.
+         Dashboard, Sales, Patients, Inventory no se actualizaban.
+  FIX:   Agregado onDataChange() a todos los componentes con las
+         keys relevantes (ventas, productos, clientes, medidas).
+
+BUG 6: Sin fallback si WebSocket falla
+  CAUSA: Solo dependia de postgres_changes que requiere configuracion
+         del servidor (ALTER PUBLICATION).
+  FIX:   Agregado sistema de polling cada 5s que consulta updated_at.
+         Funciona sin ninguna configuracion del servidor.
+
+BUG 7: Spinner flash en cada refresh realtime
+  CAUSA: Los callbacks de realtime llamaban funciones que mostraban
+         spinner de carga (setLoading(true)).
+  FIX:   Separado refreshData() (silencioso) de loadData() (con spinner).
+         Realtime usa refreshData(), carga inicial usa loadData().
+
+BUG 8: Datos existentes con formato incorrecto
+  CAUSA: Ventas creadas previamente desde web (Patata, Sara) tenian
+         fecha en formato ISO en Supabase.
+  FIX:   Script de migracion corrigio 2 ventas directamente en Supabase.
+
+
+13. PROXIMOS PASOS / FUNCIONALIDADES PENDIENTES
+================================================================================
+
+1. GEMINI API KEY
+   - Configurar GEMINI_API_KEY en .env
+   - Activara: analisis clinico AI, transcripcion de audio, TTS
+
+2. CONSULTAS CLINICAS
+   - Formulario NewConsultation funcional pero sin AI integrada
+   - Falta conectar boton microfono → transcribeAudio()
+   - Falta conectar boton AI → analyzeClinicalNotes()
+
+3. EDICION DE PACIENTES
+   - Solo existe creacion, falta pantalla de edicion
+   - La funcion updatePatient() ya existe en services.ts
+
+4. EDICION DE PRODUCTOS
+   - UI parcial, falta formulario completo de edicion
+   - La funcion updateProduct() ya existe en services.ts
+
+5. PWA (Progressive Web App)
+   - Agregar manifest.json + service worker
+   - Permitir instalacion en celular como app nativa
+   - Cache offline de assets
+
+6. SEGUNDA TIENDA
+   - Cambiar VITE_ESTABLECIMIENTO="plaza_de_armas"
+   - Toda la app se conecta automaticamente a los datos de esa tienda
+
+7. REPORTES Y GRAFICAS
+   - Dashboard actual solo muestra stats del dia
+   - Falta: graficas de ventas semanal/mensual, reportes PDF
+
+8. NOTIFICACIONES
+   - Alertas de stock critico
+   - Recordatorios de citas/seguimiento
+
+9. EXPORTACION
+   - Excel/CSV de ventas, pacientes, inventario
+   - El desktop tiene funcion Excel, la web no
+
+10. ROLES Y PERMISOS
+    - Estructura de roles existe (admin/optometrist/seller)
+    - Falta implementar restricciones por rol en la UI
+
+
+14. COMANDOS UTILES
+================================================================================
+
+# Iniciar desarrollo
+npm run dev
+
+# Build produccion
+npm run build
+
+# Verificar tipos TypeScript
+npm run lint
+
+# Iniciar con host expuesto (para acceso desde celular)
+npx vite --host
+
+# Script CommonJS (por "type": "module" en package.json)
+# Guardar como .cjs, no .js
+
+
+================================================================================
+  FIN DEL RESUMEN TECNICO
+  Este documento contiene toda la informacion necesaria para que cualquier
+  desarrollador o IA pueda continuar el desarrollo de Optical Atelier.
+================================================================================

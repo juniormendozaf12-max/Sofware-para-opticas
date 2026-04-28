@@ -1,0 +1,327 @@
+{
+  "meta": {
+    "name": "CENTRO OPTICO — Design System v3",
+    "version": "3.0.0",
+    "inspiration": "Airbnb mobile app visual language (2025)",
+    "philosophy": "Superficies blancas, tipografia bold como jerarquia, esquinas redondeadas generosas, microinteracciones suaves, color de acento usado con intencion quirurgica."
+  },
+  "colors": {
+    "brand": {
+      "primary": "#222222",
+      "primaryUsage": "Botones primarios oscuros, texto principal, headers",
+      "accent": "#FF385C",
+      "accentUsage": "CTAs principales, FAB, badges, nav activo, iconos destacados",
+      "accentLight": "#FFF0F3",
+      "accentHover": "#E31C5F",
+      "accentDark": "#C13584"
+    },
+    "semantic": {
+      "success": "#008A05",
+      "successContainer": "#E6F7E6",
+      "warning": "#E0A800",
+      "warningContainer": "#FFF8E1",
+      "error": "#C13515",
+      "errorContainer": "#FFF0ED",
+      "info": "#428BFF",
+      "infoContainer": "#EBF3FF"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "surfaceContainer": "#F7F7F7",
+      "divider": "#EBEBEB",
+      "border": "#DDDDDD",
+      "muted": "#B0B0B0"
+    },
+    "text": {
+      "primary": "#222222",
+      "secondary": "#717171",
+      "muted": "#B0B0B0",
+      "inverse": "#FFFFFF"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "headline": "'Manrope', system-ui, sans-serif",
+      "body": "'Inter', system-ui, sans-serif"
+    },
+    "scale": {
+      "displayLarge": {
+        "size": "2rem",
+        "weight": 800,
+        "letterSpacing": "-0.02em",
+        "usage": "Splash screen, titulos principales"
+      },
+      "displayMedium": {
+        "size": "1.625rem",
+        "weight": 700,
+        "letterSpacing": "-0.015em",
+        "usage": "Titulos de seccion"
+      },
+      "headlineLarge": {
+        "size": "1.375rem",
+        "weight": 700,
+        "usage": "Titulos de modal/sheet"
+      },
+      "headlineMedium": {
+        "size": "1.125rem",
+        "weight": 600,
+        "usage": "Subtitulos"
+      },
+      "headlineSmall": {
+        "size": "1rem",
+        "weight": 600,
+        "usage": "Card titles"
+      },
+      "bodyLarge": {
+        "size": "1rem",
+        "weight": 400,
+        "usage": "Texto principal"
+      },
+      "bodyMedium": {
+        "size": "0.875rem",
+        "weight": 400,
+        "usage": "Texto secundario, metadata"
+      },
+      "bodySmall": {
+        "size": "0.75rem",
+        "weight": 400,
+        "usage": "Captions, labels nav"
+      },
+      "labelLarge": {
+        "size": "0.875rem",
+        "weight": 600,
+        "usage": "Labels botones, tabs"
+      },
+      "labelSmall": {
+        "size": "0.6875rem",
+        "weight": 500,
+        "usage": "Overlines, tags"
+      }
+    }
+  },
+  "spacing": {
+    "base": "4px",
+    "pageHorizontal": "24px",
+    "sectionGap": "32px",
+    "cardGap": "12px",
+    "listItemGap": "8px"
+  },
+  "borderRadius": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "24px",
+    "pill": "9999px",
+    "card": "16px",
+    "button": "12px",
+    "searchBar": "9999px",
+    "chip": "9999px",
+    "modal": "16px",
+    "bottomSheet": "16px 16px 0 0",
+    "avatar": "50%"
+  },
+  "shadows": {
+    "none": "none",
+    "xs": "0 1px 2px rgba(0,0,0,0.04)",
+    "sm": "0 2px 8px rgba(0,0,0,0.06)",
+    "md": "0 4px 16px rgba(0,0,0,0.08)",
+    "lg": "0 8px 28px rgba(0,0,0,0.12)",
+    "searchBar": "0 2px 16px rgba(0,0,0,0.12)",
+    "fab": "0 4px 16px rgba(0,0,0,0.16)",
+    "bottomSheet": "0 -4px 24px rgba(0,0,0,0.10)",
+    "toast": "0 8px 28px rgba(0,0,0,0.2)"
+  },
+  "buttons": {
+    "primary": {
+      "bg": "#222222",
+      "bgHover": "#000000",
+      "bgActive": "#333333",
+      "text": "#FFFFFF",
+      "radius": "12px",
+      "padding": "14px 24px",
+      "fontSize": "16px",
+      "fontWeight": 600,
+      "minHeight": "48px"
+    },
+    "accent": {
+      "bg": "#FF385C",
+      "bgHover": "#E31C5F",
+      "bgActive": "#C13584",
+      "text": "#FFFFFF",
+      "radius": "12px",
+      "padding": "14px 24px",
+      "usage": "CTAs de maxima importancia: confirmar venta, guardar paciente"
+    },
+    "secondary": {
+      "bg": "transparent",
+      "bgHover": "#F7F7F7",
+      "text": "#222222",
+      "border": "1px solid #222222",
+      "radius": "12px"
+    },
+    "ghost": {
+      "bg": "transparent",
+      "text": "#222222",
+      "textDecoration": "underline",
+      "usage": "Links: Ver mas, Cancelar"
+    },
+    "chip": {
+      "default": {
+        "bg": "transparent",
+        "border": "1px solid #DDDDDD",
+        "radius": "9999px",
+        "text": "#222222"
+      },
+      "selected": {
+        "bg": "#222222",
+        "text": "#FFFFFF",
+        "border": "1px solid #222222"
+      }
+    },
+    "fab": {
+      "bg": "#FF385C",
+      "text": "#FFFFFF",
+      "size": "56px",
+      "radius": "50%",
+      "shadow": "0 4px 16px rgba(0,0,0,0.16)"
+    }
+  },
+  "cards": {
+    "standard": {
+      "bg": "#FFFFFF",
+      "border": "1px solid #EBEBEB",
+      "radius": "16px",
+      "padding": "16px-20px",
+      "hoverBg": "#F7F7F7"
+    },
+    "stat": {
+      "bg": "#FFFFFF",
+      "border": "1px solid #EBEBEB",
+      "radius": "16px",
+      "padding": "20px"
+    }
+  },
+  "navigation": {
+    "bottomBar": {
+      "bg": "#FFFFFF",
+      "borderTop": "1px solid #EBEBEB",
+      "height": "56px",
+      "activeColor": "#FF385C",
+      "inactiveColor": "#717171",
+      "iconSize": "22px",
+      "labelSize": "10px"
+    },
+    "topBar": {
+      "bg": "rgba(255,255,255,0.95)",
+      "backdropFilter": "blur(20px)",
+      "borderBottom": "1px solid #EBEBEB",
+      "height": "56px"
+    }
+  },
+  "inputs": {
+    "searchBar": {
+      "bg": "#FFFFFF",
+      "border": "1px solid #DDDDDD",
+      "radius": "9999px",
+      "padding": "14px 24px",
+      "shadow": "0 2px 16px rgba(0,0,0,0.12)"
+    },
+    "textField": {
+      "bg": "#F7F7F7",
+      "border": "none",
+      "borderFocus": "0 0 0 2px rgba(34,34,34,0.2)",
+      "radius": "12px",
+      "padding": "14px 16px"
+    }
+  },
+  "animations": {
+    "keyframes": {
+      "fadeIn": {
+        "duration": "300ms",
+        "easing": "ease-out"
+      },
+      "slideUp": {
+        "duration": "400ms",
+        "easing": "cubic-bezier(0.32,0.72,0,1)"
+      },
+      "slideUpSubtle": {
+        "duration": "350ms",
+        "easing": "cubic-bezier(0.2,0,0,1)"
+      },
+      "scaleIn": {
+        "duration": "250ms",
+        "easing": "cubic-bezier(0.2,0,0,1)"
+      },
+      "splashLogo": {
+        "duration": "800ms",
+        "easing": "cubic-bezier(0.2,0,0,1)"
+      },
+      "shimmer": {
+        "duration": "1.5s",
+        "easing": "linear",
+        "iteration": "infinite"
+      },
+      "heartBeat": {
+        "duration": "400ms",
+        "easing": "cubic-bezier(0.175,0.885,0.32,1.275)"
+      }
+    },
+    "transitions": {
+      "default": "all 0.2s cubic-bezier(0.2,0,0,1)",
+      "fast": "all 0.15s ease",
+      "color": "color 0.15s ease, background-color 0.15s ease"
+    },
+    "interactions": {
+      "buttonPress": "transform: scale(0.96)",
+      "cardHover": "translateY(-2px) + shadow increase",
+      "staggerDelay": "60ms per item"
+    }
+  },
+  "responsive": {
+    "breakpoints": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px"
+    },
+    "mobile": {
+      "pagePadding": "16px",
+      "cardScroll": "horizontal",
+      "navigation": "bottom tab bar",
+      "modals": "bottom sheet"
+    },
+    "desktop": {
+      "pagePadding": "80px",
+      "maxContentWidth": "1120px",
+      "navigation": "sidebar",
+      "modals": "centered dialog"
+    },
+    "touchTargets": {
+      "minimum": "44px",
+      "recommended": "48px"
+    }
+  },
+  "patterns": {
+    "skeleton": {
+      "bg": "linear-gradient(90deg, #F7F7F7 25%, #EBEBEB 50%, #F7F7F7 75%)",
+      "bgSize": "200% 100%",
+      "animation": "shimmer 1.5s linear infinite",
+      "radius": "12px"
+    },
+    "toast": {
+      "bg": "#222222",
+      "text": "#FFFFFF",
+      "radius": "12px",
+      "padding": "12px 20px",
+      "shadow": "0 8px 28px rgba(0,0,0,0.2)"
+    },
+    "emptyState": {
+      "iconSize": "48px",
+      "iconColor": "#B0B0B0",
+      "titleSize": "18px",
+      "titleWeight": 600,
+      "descriptionColor": "#717171"
+    }
+  }
+}
