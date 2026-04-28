@@ -848,11 +848,88 @@ export async function updatePatient(id: string, updates: Partial<Patient>): Prom
 export function searchPatients(term: string, patients: Patient[]): Patient[] {
   const t = term.toLowerCase().trim();
   if (!t) return patients;
-  return patients.filter(p =>
-    p.name.toLowerCase().includes(t) ||
-    p.dni.toLowerCase().includes(t) ||
-    (p.phone && p.phone.includes(t))
+
+  // Exact DNI/phone match — always include
+  const exactMatches = patients.filter(p =>
+    p.dni.toLowerCase().includes(t) || (p.phone && p.phone.includes(t))
   );
+
+  // Fuzzy name matching
+  const searchWords = t.split(/\s+/).filter(Boolean);
+
+  const scored: { patient: Patient; score: number }[] = [];
+  for (const p of patients) {
+    if (exactMatches.includes(p)) continue;
+    const nameLower = p.name.toLowerCase();
+
+    // Exact substring match gets highest score
+    if (nameLower.includes(t)) {
+      scored.push({ patient: p, score: 100 });
+      continue;
+    }
+
+    // Word-by-word fuzzy match
+    const nameWords = nameLower.split(/\s+/).filter(Boolean);
+    let totalScore = 0;
+    for (const sw of searchWords) {
+      let bestWordScore = 0;
+      for (const nw of nameWords) {
+        // Prefix match
+        if (nw.startsWith(sw) || sw.startsWith(nw)) {
+          bestWordScore = Math.max(bestWordScore, 80);
+          continue;
+        }
+        // Contains match
+        if (nw.includes(sw) || sw.includes(nw)) {
+          bestWordScore = Math.max(bestWordScore, 60);
+          continue;
+        }
+        // Levenshtein distance for typos (only for words 3+ chars)
+        if (sw.length >= 3 && nw.length >= 3) {
+          const dist = _levenshtein(sw, nw);
+          const maxLen = Math.max(sw.length, nw.length);
+          const similarity = 1 - dist / maxLen;
+          if (similarity >= 0.55) {
+            bestWordScore = Math.max(bestWordScore, Math.round(similarity * 50));
+          }
+        }
+      }
+      totalScore += bestWordScore;
+    }
+    if (totalScore > 0) {
+      scored.push({ patient: p, score: totalScore / searchWords.length });
+    }
+  }
+
+  // Sort by score descending, take top 30
+  scored.sort((a, b) => b.score - a.score);
+  const fuzzyResults = scored.slice(0, 30).map(s => s.patient);
+
+  // Combine: exact matches first, then fuzzy
+  const seen = new Set(exactMatches.map(p => p.id));
+  const combined = [...exactMatches];
+  for (const p of fuzzyResults) {
+    if (!seen.has(p.id)) { combined.push(p); seen.add(p.id); }
+  }
+  return combined;
+}
+
+function _levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  let curr = new Array(n + 1);
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      curr[j] = a[i - 1] === b[j - 1]
+        ? prev[j - 1]
+        : 1 + Math.min(prev[j - 1], prev[j], curr[j - 1]);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[n];
 }
 
 // ══════════════════════════════════════════

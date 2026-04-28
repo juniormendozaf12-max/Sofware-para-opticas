@@ -327,6 +327,13 @@ export function TPVProvider({ user, children }: { user: UserProfile; children: R
     setLensResults(calculateLensPrices(odEsf, odCil, oiEsf, oiCil));
   }, [odEsf, odCil, oiEsf, oiCil, showLensModal]);
 
+  // Auto-select category tab when step changes
+  useEffect(() => {
+    if (currentStep === 'monturas') setCategoryFilter('frame');
+    else if (currentStep === 'accesorios') setCategoryFilter('accessory');
+    else if (currentStep === 'pagar' || currentStep === 'listo') setCategoryFilter('all');
+  }, [currentStep]);
+
   // ══════════════════════════════════════════
   // FILTERED PRODUCTS
   // ══════════════════════════════════════════

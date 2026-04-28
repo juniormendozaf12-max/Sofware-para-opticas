@@ -11,7 +11,7 @@ import type { LensPriceResult } from '../lib/services';
 import {
   fetchProducts, fetchSales, fetchPatients, createSale, createPatient, updatePatient,
   searchProducts, searchPatients, onDataChange,
-  printSaleTicket, printSaleNote, sendTicketWhatsApp, downloadSaleBundlePdf,
+  printSaleTicket, printSaleNote, printSaleBundle, sendTicketWhatsApp, downloadSaleBundlePdf,
   calculateLensPrices, createPrescription, fetchPrescriptions, cancelSale,
 } from '../lib/services';
 import { WhatsAppIcon } from './ui/whatsapp-icon';
@@ -314,12 +314,15 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
   // ── Save RX ──
   const handleSaveRx = useCallback(async () => {
     let patientForRx = selectedPatient;
-    if (!patientForRx && patientName.trim()) {
+    const resolvedName = patientName.trim() || patientSearch.trim();
+    if (!patientForRx && resolvedName) {
       setSavingRx(true);
       try {
-        const newId = await createPatient({ name: patientName.trim().toUpperCase(), dni: '', phone: patientPhone.trim() || undefined, isVIP: false });
-        patientForRx = { id: newId, name: patientName.trim().toUpperCase(), dni: '', isVIP: false, phone: patientPhone.trim() || undefined };
+        const newId = await createPatient({ name: resolvedName.toUpperCase(), dni: '', phone: patientPhone.trim() || undefined, isVIP: false });
+        patientForRx = { id: newId, name: resolvedName.toUpperCase(), dni: '', isVIP: false, phone: patientPhone.trim() || undefined };
         setSelectedPatient(patientForRx);
+        setPatientName(resolvedName.toUpperCase());
+        setPatientSearch('');
       } catch { setSavingRx(false); return; }
     }
     if (!patientForRx) return;
@@ -336,7 +339,7 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
       setTimeout(() => setRxSaved(false), 3000);
     } catch (err) { console.error('Error saving RX:', err); }
     finally { setSavingRx(false); }
-  }, [selectedPatient, patientName, patientPhone, odEsf, odCil, odEje, odAdd, oiEsf, oiCil, oiEje, oiAdd, rxDip, rxLensType, rxOptometrist]);
+  }, [selectedPatient, patientName, patientSearch, patientPhone, odEsf, odCil, odEje, odAdd, oiEsf, oiCil, oiEje, oiAdd, rxDip, rxLensType, rxOptometrist]);
 
   // ── Confirm sale ──
   const handleConfirmSale = useCallback(async () => {
@@ -388,7 +391,7 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
     return patients.find(p => p.id === sale.patientId) || null;
   }, [patients]);
 
-  const canSaveRx = !!(selectedPatient || patientName?.trim());
+  const canSaveRx = !!(selectedPatient || patientName?.trim() || patientSearch?.trim());
 
   // ══════════════════════════════════════════
   // RENDER
@@ -753,10 +756,11 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
                   />
                 </div>
               </div>
-              <div className="flex justify-between items-center pt-2 border-t-2 border-dashed border-[#e5e5e5]">
+              <div className="flex justify-between items-center pt-3 mt-1 border-t-2 border-dashed border-[#e5e5e5]">
                 <span className="font-extrabold text-lg text-[#4b4b4b]">TOTAL</span>
-                <motion.span key={total} initial={{ scale: 1.15 }} animate={{ scale: 1 }}
-                  className="font-black text-2xl text-[#4b4b4b]">
+                <motion.span key={total} initial={{ scale: 1.15, opacity: 0.7 }} animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                  className="font-black text-3xl bg-gradient-to-r from-[#FF385C] to-[#E31C5F] bg-clip-text text-transparent">
                   {formatCurrency(total)}
                 </motion.span>
               </div>
@@ -844,10 +848,15 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
         {/* ═══════════════════════════════════
             RIGHT: RECENT SALES
             ═══════════════════════════════════ */}
-        <div className="border-t-2 lg:border-t-0 lg:border-l-2 border-[#e5e5e5] p-3 lg:p-4 lg:overflow-y-auto bg-[#f7f7f7]">
-          <div className="flex items-center gap-2 mb-3">
-            <Receipt size={18} className="text-[#58CC02]" />
-            <h3 className="font-extrabold text-[#4b4b4b] text-sm">Ventas Recientes</h3>
+        <div className="border-t-2 lg:border-t-0 lg:border-l-2 border-[#e5e5e5] p-3 lg:p-4 lg:overflow-y-auto bg-gradient-to-b from-[#f7f7f7] to-[#f0f0f0]">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#58CC02] to-[#46a302] flex items-center justify-center shadow-sm">
+              <Receipt size={16} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-[#4b4b4b] text-sm leading-tight">Ventas Recientes</h3>
+              <p className="text-[10px] font-bold text-[#afafaf]">{recentSales.length} venta{recentSales.length !== 1 ? 's' : ''} hoy</p>
+            </div>
           </div>
 
           {recentSales.length === 0 ? (
@@ -920,7 +929,12 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
 
                             {/* Action buttons — 3D style */}
                             <div className="grid grid-cols-4 gap-1.5 mt-3">
-                              <button onClick={() => printSaleTicket(sale, findPatientForSale(sale))}
+                              <button onClick={async () => {
+                                const p = findPatientForSale(sale);
+                                let rx = null;
+                                if (p) { try { const rxs = await fetchPrescriptions(p.id); rx = rxs[0] || null; } catch {} }
+                                printSaleBundle(sale, p, rx);
+                              }}
                                 className="flex flex-col items-center gap-1 py-2 rounded-xl bg-[#f7f7f7] border-2 border-[#e5e5e5] border-b-[3px] active:border-b-2 active:mt-[1px] text-[#4b4b4b] hover:bg-[#f0f0f0] transition-all">
                                 <Printer size={16} className="text-[#58CC02]" />
                                 <span className="text-[10px] font-extrabold">Ticket</span>
