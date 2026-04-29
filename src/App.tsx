@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense, Component, type ReactNode } from 'react';
 import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // file:// necesita HashRouter; http(s):// usa BrowserRouter
@@ -13,6 +13,28 @@ import { seedDatabase, preloadCriticalData } from './lib/services';
 import { setEstablecimiento } from './lib/supabase';
 import Layout from './components/Layout';
 import type { DoctorProfile } from './components/LoginScreen';
+
+// Global ErrorBoundary — prevents white-screen crashes
+class AppErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', gap: 12, fontFamily: 'system-ui', padding: 24, textAlign: 'center' }}>
+          <div style={{ fontSize: 32 }}>⚠️</div>
+          <p style={{ fontWeight: 800, color: '#4b4b4b' }}>Algo salió mal</p>
+          <p style={{ fontSize: 12, color: '#999', maxWidth: 300 }}>{this.state.error.message}</p>
+          <button onClick={() => { this.setState({ error: null }); window.location.hash = '/'; }}
+            style={{ marginTop: 8, padding: '8px 20px', background: '#58CC02', color: '#fff', fontWeight: 800, borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: 14 }}>
+            Volver al inicio
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // Lazy-load ALL heavy components — only loaded when needed
 const Dashboard = lazy(() => import('./components/Dashboard'));
@@ -192,10 +214,10 @@ export default function App() {
   };
 
   return (
-    <>
+    <AppErrorBoundary>
       {renderContent()}
       {/* Splash overlay — renders on top, doesn't block content loading */}
       {showSplash && <Suspense fallback={null}><SplashScreen onFinish={handleSplashFinish} /></Suspense>}
-    </>
+    </AppErrorBoundary>
   );
 }

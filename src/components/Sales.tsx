@@ -1,10 +1,33 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, Component, type ReactNode } from 'react';
 import type { UserProfile } from '../types';
 import TPVLayout from './tpv/TPVLayout';
+import SalesClassic from './SalesClassic';
 import { cn } from '../lib/utils';
-import { ShoppingCart, LayoutGrid, Loader2 } from 'lucide-react';
+import { ShoppingCart, LayoutGrid, AlertTriangle } from 'lucide-react';
 
-const SalesClassic = lazy(() => import('./SalesClassic'));
+// ErrorBoundary — prevents white-screen crash if a child throws
+class SalesErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 bg-[#f0f0f0] p-6 text-center">
+          <AlertTriangle size={32} className="text-[#FF9600]" />
+          <p className="font-extrabold text-[#4b4b4b] text-sm">Error al cargar ventas</p>
+          <p className="text-xs text-[#afafaf] max-w-xs">{this.state.error.message}</p>
+          <button
+            onClick={() => { this.setState({ error: null }); }}
+            className="mt-2 px-4 py-2 bg-[#58CC02] text-white font-extrabold rounded-xl text-sm border-b-4 border-[#46a302]"
+          >
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 type SalesView = 'normal' | 'tpv';
 const STORAGE_KEY = 'oa_sales_view_pref';
@@ -57,17 +80,13 @@ export default function Sales({ user }: SalesProps) {
       </div>
 
       {/* Content */}
-      {view === 'tpv' ? (
-        <TPVLayout user={user} />
-      ) : (
-        <Suspense fallback={
-          <div className="flex-1 flex items-center justify-center bg-[#f0f0f0]">
-            <Loader2 className="w-8 h-8 text-[#58CC02] animate-spin" />
-          </div>
-        }>
+      <SalesErrorBoundary>
+        {view === 'tpv' ? (
+          <TPVLayout user={user} />
+        ) : (
           <SalesClassic user={user} />
-        </Suspense>
-      )}
+        )}
+      </SalesErrorBoundary>
     </div>
   );
 }
