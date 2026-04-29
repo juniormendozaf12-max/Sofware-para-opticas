@@ -144,11 +144,11 @@ interface CartItem { product: Product; quantity: number; }
 // ══════════════════════════════════════════
 
 export default function SalesClassic({ user }: { user: UserProfile }) {
-  // ── Data ──
+  // ── Data (no blocking spinner — form renders instantly) ──
   const [products, setProducts] = useState<Product[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [recentSales, setRecentSales] = useState<Sale[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [salesLoading, setSalesLoading] = useState(true);
 
   // ── Product search ──
   const [productSearch, setProductSearch] = useState('');
@@ -214,12 +214,11 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
     return searchPatients(patientSearch, patients).slice(0, 8);
   }, [patientSearch, patients]);
 
-  // ── Data loading ──
+  // ── Data loading (non-blocking — each resolves independently) ──
   useEffect(() => {
-    Promise.all([fetchProducts(), fetchSales(30), fetchPatients()])
-      .then(([prods, sales, pats]) => { setProducts(prods); setRecentSales(sales); setPatients(pats); })
-      .catch(err => console.error('[Sales] Error loading data:', err))
-      .finally(() => setLoading(false));
+    fetchProducts().then(setProducts).catch(() => {});
+    fetchPatients().then(setPatients).catch(() => {});
+    fetchSales(30).then(r => { setRecentSales(r); setSalesLoading(false); }).catch(() => setSalesLoading(false));
   }, []);
 
   // ── Realtime ──
@@ -428,20 +427,6 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
   // ══════════════════════════════════════════
   // RENDER
   // ══════════════════════════════════════════
-
-  if (loading) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-stone-50 to-stone-100">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        >
-          <Loader2 className="w-10 h-10 text-violet-500" />
-        </motion.div>
-        <span className="font-extrabold text-stone-400 text-sm uppercase tracking-wider">Cargando...</span>
-      </div>
-    );
-  }
 
   return (
     <div className="flex-1 overflow-y-auto lg:overflow-hidden bg-gradient-to-br from-stone-100 via-stone-50 to-violet-50/30">
@@ -932,7 +917,12 @@ export default function SalesClassic({ user }: { user: UserProfile }) {
             </div>
           </div>
 
-          {recentSales.length === 0 ? (
+          {salesLoading ? (
+            <div className="py-12 flex flex-col items-center justify-center gap-2">
+              <Loader2 size={24} className="animate-spin text-violet-400" />
+              <p className="text-xs font-bold text-stone-400">Cargando ventas...</p>
+            </div>
+          ) : recentSales.length === 0 ? (
             <div className="py-12 text-center">
               <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-stone-100 flex items-center justify-center">
                 <Receipt size={28} className="text-stone-300" />
